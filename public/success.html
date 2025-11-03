@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful - MAZ Superbrand Awards</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Success Hero -->
+        <div class="success-hero">
+            <div class="brand-logo gold-gradient" style="margin-bottom: 20px;">MAZ</div>
+
+            <div class="success-icon">✓</div>
+
+            <h1 class="hero-title" style="font-size: 3em;">
+                Registration<br>
+                <span>Successful!</span>
+            </h1>
+
+            <p style="font-size: 1.3em; margin-bottom: 40px; opacity: 0.9;">
+                Thank you for registering for the MAZ Superbrand Awards 2025
+            </p>
+
+            <!-- Table Assignment -->
+            <div class="table-assignment">
+                <div style="font-size: 1.2em; margin-bottom: 15px; color: var(--primary-gold);">
+                    Your Table Assignment
+                </div>
+                <div class="table-number" id="tableNumber">T-</div>
+                <div style="font-size: 1.1em;">
+                    Please proceed to your assigned table
+                </div>
+            </div>
+
+            <!-- Download Program -->
+            <div style="margin: 50px 0;">
+                <a href="downloads/event-program.pdf" class="btn-luxury" download>
+                    📄 Download Event Program
+                </a>
+            </div>
+
+            <!-- Event Reminder -->
+            <div class="glass-card" style="padding: 30px; max-width: 500px; margin: 0 auto;">
+                <h3 style="color: var(--primary-gold); margin-bottom: 20px; text-align: center;">Event Details</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--primary-gold);">Date</div>
+                        <div>28th Nov 2025</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--primary-gold);">Time</div>
+                        <div>18:30 Hrs</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--primary-gold);">Dress Code</div>
+                        <div>Classical Bridgerton</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--primary-gold);">Venue</div>
+                        <div>Rainbow Towers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get table number from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableNumber = urlParams.get('table');
+        if (tableNumber) {
+            document.getElementById('tableNumber').textContent = tableNumber;
+        }
+    </script>
+</body>
+</html>

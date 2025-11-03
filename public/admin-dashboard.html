@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MAZ Superbrand</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Toggle for Mobile -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <div class="admin-sidebar glass-card" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo gold-gradient">MAZ</div>
+                <div class="sidebar-subtitle">Admin Portal</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="admin-dashboard.html" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="manage-companies.html" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        Manage Companies
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <div class="admin-header">
+                <div>
+                    <h1 class="admin-title">Admin Dashboard</h1>
+                    <div class="admin-subtitle">Real-time Event Management</div>
+                </div>
+                <div class="user-info">
+                    <div style="text-align: right;">
+                        <div>Welcome, Admin</div>
+                        <div style="font-size: 0.9em; color: var(--primary-gold);">Superbrand Awards 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalAttendees">0</div>
+                    <div class="stat-label">Total Attendees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCompanies">0</div>
+                    <div class="stat-label">Total Companies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="availableChairs">0</div>
+                    <div class="stat-label">Available Chairs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="occupiedChairs">0</div>
+                    <div class="stat-label">Occupied Chairs</div>
+                </div>
+            </div>
+
+            <!-- Companies Status -->
+            <div class="glass-card" style="margin-bottom: 30px;">
+                <h2 style="margin-bottom: 25px; color: var(--primary-gold); margin-left: 20px;">Companies & Table Status</h2>
+                <div id="companiesStatus" class="company-grid">
+                    <!-- Companies will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Recent Registrations -->
+            <div class="glass-card" style="margin-bottom: 30px;">
+                <h2 style="margin-bottom: 25px; color: var(--primary-gold); margin-left: 20px">Recent Registrations</h2>
+                <div style="overflow-x: auto;">
+                    <table class="luxury-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Table</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentGuests">
+                            <!-- Recent guests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- All Attendees -->
+            <div class="glass-card">
+                <h2 style="margin-bottom: 25px; color: var(--primary-gold); margin-left: 20px">All Attendees</h2>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="searchAttendees" class="form-control" placeholder="Search attendees by name, email, or company...">
+                </div>
+                <div style="overflow-x: auto; max-height: 500px;">
+                    <table class="luxury-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Table</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allGuests">
+                            <!-- All guests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
+
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(event.target) &&
+                !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

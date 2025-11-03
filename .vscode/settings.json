@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "emmet.includeLanguages": {
+        "javascript": "html"
+    },
+    "liveServer.settings.port": 5501
+}
