@@ -1,0 +1,227 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color:#333333; /* Light grey */
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top logo section */
+.top-logo-section {
+    text-align: center;
+    padding: 20px 0 10px;
+}
+.mary{
+    text-align: center;
+    padding: 20px 0 10px;
+    color: white;
+}
+
+.top-logo-section img {
+    max-width: 200px;
+    height: auto;
+}
+
+.top-logo-section .maryt img{
+    max-width: 100px;
+    height: auto;
+}
+
+/* Main form container */
+.container {
+    background-color:#333333;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px 40px;
+}
+
+.hero-section {
+    width: 100%;
+    max-width: 600px;
+}
+
+/*.luxury-form {
+    background-color: white; /* White 
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 40px 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+*/
+.luxury-form {
+    background: 
+    url('../assets/images/superbrand.png') no-repeat center center;
+    background-size: 180px auto; /* ← Adjust width (180px) as needed */
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px 30px;
+}
+.luxury-form h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    color: #222;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    text-align: center;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: white; /* Dark labels for readability on white */
+}
+
+.select-co{
+    text-align: center;
+    color:#333;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white; /* White input background */
+    color: #333;
+}
+
+.form-control {
+    width: 65%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    color: #333;
+    display: block;       /* ← Required for margin: 0 auto to work */
+    margin: 0 auto;       /* ← Now this centers the input */
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* Buttons */
+.btn-luxury {
+    background-color: #d4af37;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;         /* ← Make it a block element */
+    width: fit-content;     /* ← Let it size to content (better than 'auto') */
+    margin: 0 auto;         /* ← Now this works! */
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
+}
+   
+.btn-luxury:hover {
+    background-color: #b8962a;
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.btn-outline-gold {
+    display: inline-block;
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 1px solid #d4af37;
+    border-radius: 6px;
+}
+
+.btn-outline-gold:hover {
+    background-color: #d4af37;
+    color: white;
+}
+
+/* Bottom attribution + logo */
+.bottom-attribution {
+    text-align: center;
+    padding: 20px;
+    color: white;
+    background-color: #333;
+    margin-top: auto;
+}
+
+.bottom-attribution p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.bottom-logo img {
+    max-width: 100px;
+    height: auto;
+    margin-top:10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .luxury-form {
+        padding: 30px 20px;
+    }
+
+    .luxury-form h2 {
+        font-size: 1.5em;
+    }
+
+    .top-logo-section img,
+    .bottom-logo img {
+        max-width: 160px;
+    }
+
+    .bottom-attribution p {
+        font-size: 14px;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-logo-section {
+        padding: 15px 0 5px;
+    }
+
+    .top-logo-section img,
+    .bottom-logo img {
+        max-width: 140px;
+    }
+
+    .luxury-form {
+        padding: 25px 15px;
+    }
+
+    .form-control {
+        padding: 12px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .bottom-attribution {
+        padding: 15px 10px;
+    }
+}
