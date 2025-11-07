@@ -70,5 +70,33 @@
     </div>
 
     <script src="js/app.js"></script>
+    <!-- Send email after successful registration -->
+
+    <script>
+document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('register.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Registration successful! A confirmation email has been sent to your address.');
+            this.reset();
+        } else {
+            alert('Registration failed: ' + (result.message || 'Please try again.'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An unexpected error occurred. Please try again.');
+    }
+});
+</script>
 </body>
 </html>

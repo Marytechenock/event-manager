@@ -82,7 +82,7 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS companies (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE NOT NULL,
-        table_number TEXT NOT NULL,
+        table_number TEXT UNIQUE NOT NULL,
         total_chairs INTEGER NOT NULL,
         chairs_occupied INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP

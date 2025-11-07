@@ -16,14 +16,34 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     const { name, table_number, total_chairs } = req.body;
 
+    // Validate input
+    if (!name?.trim() || !table_number?.trim() || !total_chairs) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const cleanName = name.trim();
+    const cleanTable = table_number.trim();
+
     db.run(
         'INSERT INTO companies (name, table_number, total_chairs) VALUES (?, ?, ?)',
-        [name, table_number, parseInt(total_chairs)],
+        [cleanName, cleanTable, parseInt(total_chairs)],
         function(err) {
             if (err) {
+                // Handle duplicate company name (case-insensitive)
+                if (err.message.includes('companies_name_unique') || 
+                    err.message.includes('UNIQUE constraint failed') && 
+                    (err.message.includes('name') || err.message.includes('LOWER(name)'))) {
+                    return res.status(409).json({ error: 'Company name already exists' });
+                }
+                // Handle duplicate table number (case-insensitive)
+                if (err.message.includes('companies_table_number_unique') || 
+                    err.message.includes('UNIQUE constraint failed') && 
+                    (err.message.includes('table_number') || err.message.includes('UPPER(table_number)'))) {
+                    return res.status(409).json({ error: 'Table number already exists' });
+                }
                 return res.status(500).json({ error: 'Failed to add company' });
             }
-            res.json({ message: 'Company added successfully', id: this.lastID });
+            res.status(201).json({ message: 'Company added successfully', id: this.lastID });
         }
     );
 });
@@ -33,11 +53,31 @@ router.put('/:id', (req, res) => {
     const { name, table_number, total_chairs } = req.body;
     const companyId = req.params.id;
 
+    // Validate input
+    if (!name?.trim() || !table_number?.trim() || !total_chairs) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const cleanName = name.trim();
+    const cleanTable = table_number.trim();
+
     db.run(
         'UPDATE companies SET name = ?, table_number = ?, total_chairs = ? WHERE id = ?',
-        [name, table_number, parseInt(total_chairs), companyId],
+        [cleanName, cleanTable, parseInt(total_chairs), companyId],
         function(err) {
             if (err) {
+                // Handle duplicate company name
+                if (err.message.includes('companies_name_unique') || 
+                    err.message.includes('UNIQUE constraint failed') && 
+                    (err.message.includes('name') || err.message.includes('LOWER(name)'))) {
+                    return res.status(409).json({ error: 'Company name already exists' });
+                }
+                // Handle duplicate table number
+                if (err.message.includes('companies_table_number_unique') || 
+                    err.message.includes('UNIQUE constraint failed') && 
+                    (err.message.includes('table_number') || err.message.includes('UPPER(table_number)'))) {
+                    return res.status(409).json({ error: 'Table number already exists' });
+                }
                 return res.status(500).json({ error: 'Failed to update company' });
             }
             res.json({ message: 'Company updated successfully' });
