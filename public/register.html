@@ -3,34 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration - MAZ Superbrand Awards</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Registration</title>
+    <link rel="stylesheet" href="css/register.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Top Logo - centered at top of page -->
+    <div class="top-logo-section">
+        <img src="/assets/images/super.png" alt="MAZ Superbrand Awards Logo">
+    </div>
+
     <div class="container">
-        <!-- Brand Header -->
-        <div class="brand-header">
-            <div class="brand-logo gold-gradient">MAZ</div>
-            <div class="brand-subtitle">Event Registration</div>
-        </div>
-
-        <!-- Registration Form -->
         <div class="hero-section">
-            <div class="luxury-form glass-card" style="padding: 50px;">
-                <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.2em;">Guest Registration</h2>
-
+            <div class="luxury-form glass-card">
                 <form id="registrationForm">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label for="name" class="form-label">First Name *</label>
-                            <input type="text" id="name" class="form-control" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="name" class="form-label">First Name *</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="surname" class="form-label">Last Name *</label>
-                            <input type="text" id="surname" class="form-control" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="surname" class="form-label">Last Name *</label>
+                        <input type="text" id="surname" class="form-control" required>
                     </div>
 
                     <div class="form-group">
@@ -46,7 +40,9 @@
                     <div class="form-group">
                         <label for="company" class="form-label">Company *</label>
                         <select id="company" class="form-control" required>
-                            <option value="">Select your company</option>
+                            <div class = "select-co">
+                                <option value="">Select your company</option>
+                            </div>
                         </select>
                     </div>
 
@@ -55,48 +51,26 @@
                         <input type="text" id="position" class="form-control" required>
                     </div>
 
-                    <button type="submit" class="btn-luxury" style="width: 100%; margin-top: 20px;">
-                        Complete Registration
-                    </button>
+                    <div class = "form-group">
+                        <button type="submit" class="btn-luxury">
+                          Submit
+                        </button>
+                    </div>
                 </form>
-
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="index.html" class="btn-outline-gold">
-                        ← Back to Welcome
-                    </a>
-                </div>
             </div>
         </div>
     </div>
 
+    <!-- Bottom attribution + logo (not in <footer>) -->
+    <div class="mary">
+         <p>Marytechenock Solutions is a technology advisory consultant company for MAZ</p>
+    </div>
+    <div class="top-logo-section">
+        <div class="maryt">
+            <img src="/assets/images/footer-logo.png" alt="Marytechenock Solutions Logo">
+        </div>
+    </div>
+    
     <script src="js/app.js"></script>
-    <!-- Send email after successful registration -->
-
-    <script>
-document.getElementById('registrationForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(this);
-
-    try {
-        const response = await fetch('register.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Registration successful! A confirmation email has been sent to your address.');
-            this.reset();
-        } else {
-            alert('Registration failed: ' + (result.message || 'Please try again.'));
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An unexpected error occurred. Please try again.');
-    }
-});
-</script>
 </body>
 </html>

@@ -1,79 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful - MAZ Superbrand Awards</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Successful Registration</title>
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="css/success.css">
+    <style>  
+    </style>
 </head>
 <body>
+    <!-- Top Logo Area -->
+    <div class="top-logo">
+        <!-- Replace src with your actual logo path -->
+        <img src="/assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
+    </div>
+
+
+    <h1 class="hero-title">
+        Registration <br>
+        Successful!
+    </h1>
+
+    <p class="success-message">
+            Thank you for registering for the MAZ <br/> 
+            <span><p class = success-mess>Superbrand Awards 2025</p></span>
+    </p>
+
+
+    <!-- Main Content -->
     <div class="container">
-        <!-- Success Hero -->
-        <div class="success-hero">
-            <div class="brand-logo gold-gradient" style="margin-bottom: 20px;">MAZ</div>
+        <!-- Table Assignment -->
+        <div class="table-assignment">
+            <div class="table-label">Your Table Assignment</div>
+            <div class="table-number" id="tableNumber" data-text="Table 3">Table 3</div>
+            <div class="table-instruction">Please proceed to your assigned table</div>
+        </div>
 
-            <div class="success-icon">✓</div>
+    </div>
 
-            <h1 class="hero-title" style="font-size: 3em;">
-                Registration<br>
-                <span>Successful!</span>
-            </h1>
+    <!-- Download Button -->
+        <a href="downloads/event-program.pdf" class="btn-luxury" download>
+            View and download the event program
+        </a>
 
-            <p style="font-size: 1.3em; margin-bottom: 40px; opacity: 0.9;">
-                Thank you for registering for the MAZ Superbrand Awards 2025
-            </p>
+       <button class="exit-btn" onclick="exitGracefully()">Exit</button>
 
-            <!-- Table Assignment -->
-            <div class="table-assignment">
-                <div style="font-size: 1.2em; margin-bottom: 15px; color: var(--primary-gold);">
-                    Your Table Assignment
-                </div>
-                <div class="table-number" id="tableNumber">T-</div>
-                <div style="font-size: 1.1em;">
-                    Please proceed to your assigned table
-                </div>
-            </div>
+        <div class="sadc-text">Leading digital transformation in SADC</div>
 
-            <!-- Download Program -->
-            <div style="margin: 50px 0;">
-                <a href="downloads/event-program.pdf" class="btn-luxury" download>
-                    📄 Download Event Program
-                </a>
-            </div>
-
-            <!-- Event Reminder -->
-            <div class="glass-card" style="padding: 30px; max-width: 500px; margin: 0 auto;">
-                <h3 style="color: var(--primary-gold); margin-bottom: 20px; text-align: center;">Event Details</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--primary-gold);">Date</div>
-                        <div>28th Nov 2025</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--primary-gold);">Time</div>
-                        <div>18:30 Hrs</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--primary-gold);">Dress Code</div>
-                        <div>Classical Bridgerton</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--primary-gold);">Venue</div>
-                        <div>Rainbow Towers</div>
-                    </div>
-                </div>
-            </div>
+        <!-- Bottom Logo Area -->
+        <div class="bottom-logo">
+            <img src="assets/images/footer-logo.png"/>
         </div>
     </div>
 
+    <!-- Confetti Script -->
     <script>
-        // Get table number from URL parameters
+            function exitGracefully() {
+                window.location.href = 'index.html';
+            }
+
+        // Get table number from URL
         const urlParams = new URLSearchParams(window.location.search);
         const tableNumber = urlParams.get('table');
         if (tableNumber) {
             document.getElementById('tableNumber').textContent = tableNumber;
         }
+
+        // Start confetti on load
+        function startConfetti() {
+            const duration = 5 * 1000; // 40 seconds
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(() => {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 100 * (timeLeft / duration);
+                confetti(
+                    Object.assign({}, defaults, {
+                        particleCount,
+                        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+                    })
+                );
+            }, 250);
+        }
+
+        // Trigger confetti when page loads
+        window.addEventListener('load', startConfetti);
     </script>
 </body>
 </html>
