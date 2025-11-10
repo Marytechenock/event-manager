@@ -1,14 +1,14 @@
     body {
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
       background: #f0f4f8;
-      padding: 20px;
       margin: 0;
+      padding: 0;
+      color: #333;
     }
-    h1 { color: #2c3e50; }
+
     .container {
       max-width: 600px;
-      margin: 0 auto;
+      margin: 30px auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
@@ -16,18 +16,13 @@
       position: relative;
       z-index: 10;
     }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    input {
-      padding: 8px;
-      font-size: 16px;
-      width: 80px;
+
+    h1 {
+      color: #2c3e50;
       text-align: center;
-      margin: 8px;
+      margin-bottom: 20px;
     }
+
     button {
       padding: 10px 20px;
       font-size: 16px;
@@ -36,6 +31,7 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
     #drawBtn { background: #3498db; color: white; }
     #resetBtn { background: #95a5a6; color: white; }
 
@@ -45,10 +41,12 @@
       height: 320px;
       margin: 20px auto;
     }
+
     canvas {
       border-radius: 50%;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
+
     .pointer {
       position: absolute;
       top: -10px;
@@ -67,7 +65,7 @@
       font-weight: bold;
       color: #e74c3c;
       margin: 15px 0;
-      min-height: 36px;
+      text-align: center;
     }
 
     #winners {
@@ -78,10 +76,29 @@
       border-radius: 6px;
       max-height: 120px;
       overflow-y: auto;
+      border: 1px solid #ddd;
     }
+
     .winner-item {
       margin: 3px 0;
       font-weight: bold;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 8px 16px;
+      background: #95a5a6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background: #7f8c8d;
     }
 
     /* === WINNER MODAL === */
@@ -115,10 +132,20 @@
       opacity: 0;
     }
 
+    /* ✅ Sponsor header INSIDE modal */
+    #modalSponsorHeader {
+      font-size: 22px;
+      color: white;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      font-weight: bold;
+    }
+
     .trophy {
       font-size: 100px;
       margin-bottom: 10px;
       text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      color: #ffd700;
     }
 
     #winnerNumber {

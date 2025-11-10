@@ -7,23 +7,44 @@
     let allNumbers = [];
     let drawnWinners = [];
     let rotation = 0;
+    let sponsorName = "";
 
     const colors = [
       '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
       '#1abc9c', '#d35400', '#8e44ad', '#27ae60', '#f1c40f'
     ];
 
-    const celebrationWords = ["Congratulations!", "Winner!", "Amazing!", "Anthony-Higgins", "You Rock!", "Bravo!", "Hooray!"];
+    const celebrationWords = ["Congratulations!", "Winner!", "Amazing!", "ANTONY HIGGINS!", "You Rock!", "Bravo!", "Hooray!","Gambler!"];
 
     let isSpawningEffects = false;
 
+    // Get URL parameters
+    function getUrlParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
     function initRaffle() {
-      const totalInput = document.getElementById('totalTickets').value.trim();
-      const total = parseInt(totalInput, 10);
+      const totalStr = getUrlParameter('tickets');
+      const company = getUrlParameter('company');
+      const total = parseInt(totalStr, 10);
+      
       if (isNaN(total) || total < 1) {
-        alert("Please enter a valid number (≥1).");
+        alert("Invalid number of tickets. Redirecting to setup...");
+        window.location.href = 'raffle-setup.html';
         return false;
       }
+      
+      if (!company) {
+        alert("No company name provided. Redirecting to setup...");
+        window.location.href = 'raffle-setup.html';
+        return false;
+      }
+
+      sponsorName = decodeURIComponent(company);
+      // Set sponsor name in modal (will be shown when modal opens)
+      document.getElementById('modalSponsorName').textContent = sponsorName;
+
       allNumbers = Array.from({ length: total }, (_, i) => i + 1);
       drawnWinners = [];
       rotation = 0;
@@ -54,7 +75,7 @@
       ctx.translate(-centerX, -centerY);
 
       const angleStep = (2 * Math.PI) / total;
-      const showLabels = total <= 20;
+      const showLabels = total <= 500;
 
       for (let i = 0; i < total; i++) {
         const startAngle = i * angleStep;
@@ -120,16 +141,17 @@
       if (isSpawningEffects) return;
       isSpawningEffects = true;
 
-      // Keep adding new dots and words forever
       setInterval(() => {
         spawnFloatingDot();
         spawnCelebrationWord();
-      }, 400); // ~2–3 new items per second → lively but stable
+      }, 400);
     }
 
     function showWinnerModal(winner) {
       document.getElementById('winnerNumber').textContent = winner;
       document.getElementById('congratsText').textContent = "Congratulations!";
+      // ✅ Sponsor name already set in initRaffle, but update just in case
+      document.getElementById('modalSponsorName').textContent = sponsorName;
 
       const modal = document.getElementById('winnerModal');
       modal.classList.remove('show');
@@ -141,7 +163,6 @@
 
     function closeWinnerModal() {
       document.getElementById('winnerModal').classList.remove('show');
-      // Effects continue floating forever — no cleanup
     }
 
     function drawWinner() {
