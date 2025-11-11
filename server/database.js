@@ -1,13 +1,14 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 // Database configuration - Update these with your PostgreSQL credentials
 const pool = new Pool({
-  user: 'postgres',      // Replace with your PostgreSQL username
-  host: 'localhost',
-  database: 'event_manager',  // Your database name
-  password: 'postgres',  // Replace with your PostgreSQL password
-  port: 5432,        // Default PostgreSQL port
+  user: process.env.DB_USER ||'postgres',      // Replace with your PostgreSQL username
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'event_manager',  // Your database name
+  password: process.env.DB_PASSWORD || 'postgres',  // Replace with your PostgreSQL password
+  port: process.env.DB_PORT || 5432,        // Default PostgreSQL port
 });
 
 // Initialize database
