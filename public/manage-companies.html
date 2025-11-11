@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Companies - MAZ Superbrand</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage-companies.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="admin-container">
@@ -17,9 +17,9 @@
 
         <!-- Sidebar -->
         <div class="admin-sidebar glass-card" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo gold-gradient">MAZ</div>
-                <div class="sidebar-subtitle">Admin Portal</div>
+            <!-- New Logo Container -->
+            <div class="sidebar-logo">
+                <img src="assets/logo.png" alt="Logo">
             </div>
 
             <nav class="sidebar-nav">
@@ -46,51 +46,61 @@
 
         <!-- Main Content -->
         <div class="admin-main">
-            <div class="admin-header">
-                <div>
+            <!-- Dedicated Header -->
+            <div class="page-header">
+                <div class="page-title-section">
                     <h1 class="admin-title">Manage Companies</h1>
                     <div class="admin-subtitle">Assign tables and manage company allocations</div>
                 </div>
                 <div class="user-info">
-                    <div style="text-align: right;">
+                    <div style="text-align: right; color: var(--text-light);">
                         <div>Welcome, Admin</div>
-                        <div style="font-size: 0.9em; color: var(--primary-gold);">Superbrand Awards 2025</div>
+                        <div style="font-size: 0.9em; color: var(--text-light);">Superbrand Awards 2025</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Add Company Form -->
-            <div class="glass-card" style="margin-bottom: 30px;">
-                <h2 style="margin-bottom: 25px; color: var(--primary-gold);">Add New Company</h2>
+            <!-- Add New Company Card -->
+            <div class="add-company-card">
+                <h2>Add New Company</h2>
                 <form id="addCompanyForm">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="companyName" class="form-label">Company Name *</label>
-                            <input type="text" id="companyName" class="form-control" required>
+                            <label>COMPANY NAME</label>
+                            <input type="text" id="companyName" placeholder="e.g., MARYTECHENOCK SOLUTIONS" required>
                         </div>
-
                         <div class="form-group">
-                            <label for="tableNumber" class="form-label">Table Number *</label>
-                            <input type="text" id="tableNumber" class="form-control" required placeholder="e.g., T1, T2">
+                            <label>TABLE NUMBER</label>
+                            <input type="text" id="tableNumber" placeholder="e.g., TABLE 23" required>
                         </div>
-
                         <div class="form-group">
-                            <label for="totalChairs" class="form-label">Number of Chairs *</label>
-                            <input type="number" id="totalChairs" class="form-control" required min="1" value="10">
+                            <label>NUMBER OF CHAIRS</label>
+                            <input type="number" id="totalChairs" required min="1" value="10">
                         </div>
                     </div>
-
-                    <button type="submit" class="btn-luxury" style="margin-top: 20px;">
-                        <i class="fas fa-plus"></i> Add Company
-                    </button>
+                    <button type="submit" class="btn-add-company">+ Add Company</button>
                 </form>
             </div>
 
-            <!-- Companies List -->
-            <div class="glass-card">
-                <h2 style="margin-bottom: 25px; color: var(--primary-gold);">Companies & Tables</h2>
-                <div id="companiesList" class="company-grid">
-                    <!-- Companies will be loaded here -->
+            <!-- Companies Table Section -->
+            <div class="companies-table-card">
+                <h2>Companies and Tables</h2>
+                <div class="table-container">
+                    <table class="companies-table">
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Table Number</th>
+                                <th>Total Chairs</th>
+                                <th>Occupied</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companiesList">
+                            <!-- Data will be injected here by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -103,7 +113,6 @@
             sidebar.classList.toggle('open');
         }
 
-        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.querySelector('.sidebar-toggle');
@@ -115,7 +124,6 @@
             }
         });
 
-        // Logout function
         function logout() {
             localStorage.removeItem('adminLoggedIn');
             window.location.href = 'admin-login.html';

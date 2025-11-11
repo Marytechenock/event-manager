@@ -1,0 +1,479 @@
+/* ===== RESET & VARIABLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #d4af37;
+    --text-dark: #333;
+    --text-light: #777;
+    --card-bg: #e0e0e0;
+    --input-bg: #1a1a1a;
+    --btn-blue: #5d8af7;
+    --btn-blue-hover: #4a7be3;
+    --white: #ffffff;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f4 100%);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== ADMIN LAYOUT ===== */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Toggle (Mobile) */
+.sidebar-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--btn-blue);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    display: none;
+    cursor: pointer;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 280px;
+    background: #1a252f;
+    color: white;
+    padding: 30px 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== SIDEBAR LOGO ===== */
+.sidebar-logo {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+.sidebar-logo img {
+    width: 220px;
+    height: 100px;
+    object-fit: cover;
+    background: transparent;
+    border-radius: 8px;
+}
+
+/* ===== SIDEBAR NAVIGATION ===== */
+.sidebar-nav .nav-item {
+    margin-bottom: 12px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(212, 175, 55, 0.2);
+    color: white;
+}
+
+.nav-link i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+.nav-link.logout {
+    margin-top: auto;
+    color: #ff6b6b !important;
+}
+
+.nav-link.logout:hover {
+    background: rgba(255, 107, 107, 0.15) !important;
+}
+
+/* ===== MAIN CONTENT AREA ===== */
+.admin-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: #081b29;
+}
+
+.page-title-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.admin-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.admin-subtitle {
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+.user-info {
+    color: var(--text-light);
+    text-align: right;
+    min-width: 200px;
+}
+
+.user-info div:last-child {
+    color: var(--primary-gold);
+}
+
+/* ===== ADD COMPANY CARD ===== */
+.add-company-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.add-company-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--input-bg);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group input::placeholder,
+.form-group select {
+    color: #aaa;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    box-shadow: 0 0 0 2px rgba(93, 138, 247, 0.3);
+}
+
+.btn-add-company {
+    background: var(--btn-blue);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-company:hover {
+    background: var(--btn-blue-hover);
+}
+
+/* ===== COMPANIES TABLE CARD ===== */
+.companies-table-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.companies-table-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.companies-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.companies-table th,
+.companies-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.companies-table th {
+    background: #f8f9fa;
+    font-weight: 700;
+    color: #555;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.companies-table tr:last-child td {
+    border-bottom: none;
+}
+
+.companies-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+    display: inline-block;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-partial {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Progress Bar */
+.chair-progress {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.chair-progress-bar {
+    height: 100%;
+    background: var(--primary-gold);
+    border-radius: 3px;
+}
+
+/* Actions Column */
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background: #f0f0f0;
+}
+
+.action-btn.edit {
+    color: #007bff;
+}
+
+.action-btn.delete {
+    color: #dc3545;
+}
+
+/* Edit Form (Inline) */
+.edit-form {
+    width: 100%;
+}
+
+.edit-form label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.edit-form input {
+    width: 100%;
+    padding: 10px;
+    background: var(--input-bg);
+    color: var(--white);
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary-gold);
+    color: var(--primary-gold);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-light);
+    font-style: italic;
+    font-size: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .sidebar-toggle {
+        display: block;
+    }
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .admin-main {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-info {
+        text-align: left;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .companies-table th,
+    .companies-table td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        font-size: 12px;
+        min-width: 60px;
+    }
+
+    .admin-title {
+        font-size: 26px;
+    }
+
+    .sidebar-logo img {
+        width: 180px;
+        height: 80px;
+    }
+}

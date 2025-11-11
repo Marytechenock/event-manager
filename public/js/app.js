@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 companies.forEach(company => {
                     const option = document.createElement('option');
                     option.value = company.id;
-                    option.textContent = `${company.name} (Table ${company.table_number} - ${company.total_chairs - company.chairs_occupied} seats left)`;
+                    option.textContent = `${company.name}`;
                     companySelect.appendChild(option);
                 });
             })

@@ -3,97 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - MAZ Superbrand Event</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/admin-login.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Brand Header -->
-        <div class="brand-header fade-in-up">
-            <div class="brand-logo gold-gradient">MAZ</div>
-            <div class="brand-subtitle">Admin Portal</div>
-        </div>
-
-        <!-- Login Form -->
-        <div class="hero-section">
-            <div class="luxury-form glass-card" style="padding: 50px; max-width: 450px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.2em;">Admin Login</h2>
-
-                <form id="adminLoginForm">
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" id="username" class="form-control" required value="admin">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" class="form-control" required value="admin123">
-                    </div>
-
-                    <button type="submit" class="btn-luxury" style="width: 100%; margin-top: 20px;">
-                        Login to Admin Portal
-                    </button>
-                </form>
-
-                <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                    <p style="margin: 0; font-size: 0.9em; opacity: 0.8; text-align: center;">
-                        <strong>Default Credentials:</strong><br>
-                        Username: admin<br>
-                        Password: admin123
-                    </p>
+    <div class="login-container">
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <h2>Login</h2>
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <span class="show-password"></span>
                 </div>
             </div>
-        </div>
+            <button type="submit">Sign in</button>
+        </form>
     </div>
-
     <script src="js/admin.js"></script>
 </body>
 </html>
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - MAZ Superbrand Event</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="welcome-header">
-            <h1 class="gold-gradient">MAZ Event Admin</h1>
-            <p>SWITCH AWARDS NIGHT Management Portal</p>
-        </div>
-
-        <div class="card" style="max-width: 400px; margin: 0 auto;">
-            <form id="adminLoginForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" class="form-control" required value="admin">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="form-control" required value="admin123">
-                </div>
-
-                <button type="submit" class="btn-gold" style="width: 100%;">
-                    Login to Admin Portal
-                </button>
-            </form>
-
-            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                <p style="margin: 0; font-size: 0.9em; opacity: 0.8;">
-                    <strong>Default Credentials:</strong><br>
-                    Username: admin<br>
-                    Password: admin123
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/admin.js"></script>
-</body>
-</html> -->

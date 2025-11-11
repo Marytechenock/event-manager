@@ -3,60 +3,91 @@ const bcrypt = require('bcryptjs');
 const db = require('../database');
 const router = express.Router();
 
-// Admin login
-router.post('/login', (req, res) => {
+// 🔐 Admin authentication middleware
+function requireAdminAuth(req, res, next) {
+    if (req.session && req.session.adminLoggedIn) {
+        return next();
+    }
+    res.status(401).json({ error: 'Unauthorized: Admin login required' });
+}
+
+// 🚪 Admin login
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    db.get('SELECT * FROM admins WHERE username = ?', [username], (err, admin) => {
-        if (err) {
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
+    try {
+        // Fetch admin by username
+        const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+        
+        if (result.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        res.json({ message: 'Login successful', user: { id: admin.id, username: admin.username } });
+        const admin = result.rows[0];
+        const isPasswordValid = await bcrypt.compare(password, admin.password_hash);
+        
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        // ✅ CREATE SESSION — THIS WAS MISSING!
+        req.session.adminLoggedIn = true;
+        req.session.adminId = admin.id; // optional: store admin ID
+
+        res.json({ 
+            message: 'Login successful', 
+            user: { 
+                id: admin.id, 
+                username: admin.username 
+            } 
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'An error occurred during login' });
+    }
+});
+
+// 🚪 Admin logout
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Could not log out' });
+        }
+        res.json({ message: 'Logged out successfully' });
     });
 });
 
-// Get dashboard metrics
-router.get('/metrics', (req, res) => {
-    const metrics = {};
+// 📊 Protected: Get dashboard metrics
+router.get('/metrics', requireAdminAuth, async (req, res) => {
+    try {
+        const metrics = {};
+        
+        // Total attendees
+        const attendeesResult = await db.query('SELECT COUNT(*) as total FROM guests');
+        metrics.totalAttendees = parseInt(attendeesResult.rows[0].total);
 
-    // Total attendees
-    db.get('SELECT COUNT(*) as total FROM guests', (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: 'Database error' });
-        }
-        metrics.totalAttendees = result.total;
-
-        // Companies with available chairs
-        db.all(`
+        // Companies with chair info
+        const companiesResult = await db.query(`
             SELECT c.*,
                    (c.total_chairs - c.chairs_occupied) as available_chairs
             FROM companies c
-        `, (err, companies) => {
-            if (err) {
-                return res.status(500).json({ error: 'Database error' });
-            }
-            metrics.companies = companies;
+        `);
+        metrics.companies = companiesResult.rows;
 
-            // All guests
-            db.all(`
-                SELECT g.*, c.name as company_name
-                FROM guests g
-                LEFT JOIN companies c ON g.company_id = c.id
-                ORDER BY g.registered_at DESC
-            `, (err, guests) => {
-                if (err) {
-                    return res.status(500).json({ error: 'Database error' });
-                }
-                metrics.guests = guests;
-                res.json(metrics);
-            });
-        });
-    });
+        // All guests with company names
+        const guestsResult = await db.query(`
+            SELECT g.*, c.name as company_name
+            FROM guests g
+            LEFT JOIN companies c ON g.company_id = c.id
+            ORDER BY g.registered_at DESC
+        `);
+        metrics.guests = guestsResult.rows;
+        
+        res.json(metrics);
+    } catch (error) {
+        console.error('Error fetching metrics:', error);
+        res.status(500).json({ error: 'Failed to fetch dashboard metrics' });
+    }
 });
 
 module.exports = router;
