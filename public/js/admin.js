@@ -1,20 +1,15 @@
-// Check if user is logged in
-function checkAuth() {
-    if (!localStorage.getItem('adminLoggedIn')) {
-        window.location.href = 'admin-login.html';
-        return false;
-    }
-    return true;
-}
-
-// Logout function
-function logout() {
-    localStorage.removeItem('adminLoggedIn');
-    window.location.href = 'admin-login.html';
-}
-
 // Global variable to hold current search term
 let currentSearchTerm = '';
+
+// Logout function – calls server to destroy session
+function logout() {
+    fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: 'same-origin' // ensures cookies are sent
+    }).finally(() => {
+        window.location.href = 'admin-login.html';
+    });
+}
 
 // Admin Login & Dashboard Initialization
 document.addEventListener('DOMContentLoaded', function () {
@@ -32,15 +27,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password }),
+                credentials: 'same-origin' // critical for sessions
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === 'Login successful') {
-                        localStorage.setItem('adminLoggedIn', 'true');
+                        // Redirect directly – no localStorage needed
                         window.location.href = 'admin-dashboard.html';
                     } else {
-                        alert('Login failed: ' + data.error);
+                        alert('Login failed: ' + (data.error || 'Invalid credentials'));
                     }
                 })
                 .catch(error => {
@@ -52,10 +48,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load dashboard data if on dashboard page
     if (window.location.pathname.includes('admin-dashboard.html')) {
-        if (checkAuth()) {
-            loadDashboardData();
-            setInterval(loadDashboardData, 10000); // Refresh every 10 seconds
-        }
+        // No auth check needed — server already protected this page
+        loadDashboardData();
+        setInterval(loadDashboardData, 10000); // Refresh every 10 seconds
     }
 
     // Search functionality for attendees
