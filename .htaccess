@@ -1,7 +1,3 @@
-# Test rule - redirect to Google if working
-<!-- RewriteRule ^test$ https://google.com [R,L] -->
-
-
 # Remove .html extension
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f
