@@ -7,7 +7,7 @@ const pool = new Pool({
   host: 'localhost',
   database: 'event_manager',  // Your database name
   password: 'postgres',  // Replace with your PostgreSQL password
-  port: 5432,        // Default PostgreSQL port
+  port: 5433,        // Default PostgreSQL port
 });
 
 // Initialize database
