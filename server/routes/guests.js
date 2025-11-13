@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../database');
 const router = express.Router();
+const { sendRegistrationEmail } = require('../services/emailService');
 
 // Register new guest
 router.post('/register', async (req, res) => {
@@ -18,7 +19,7 @@ router.post('/register', async (req, res) => {
             FOR UPDATE
         `;
         const companyResult = await client.query(companyQuery, [company_id]);
-        
+
         if (companyResult.rows.length === 0) {
             await client.query('ROLLBACK');
             return res.status(400).json({ error: 'Company not found' });
@@ -33,7 +34,7 @@ router.post('/register', async (req, res) => {
 
         // Check if email already registered
         const existingGuest = await client.query(
-            'SELECT id FROM guests WHERE email = $1', 
+            'SELECT id FROM guests WHERE email = $1',
             [email]
         );
 
@@ -59,8 +60,30 @@ router.post('/register', async (req, res) => {
         );
 
         await client.query('COMMIT');
-        
+
+        // Prepare guest data for email
+        const guestData = {
+            name,
+            surname,
+            email,
+            phone,
+            company_name: company.name,
+            position,
+            table_number: company.table_number
+        };
+
+        console.log('Guest data: ' + guestData)
+
+        // Send confirmation email
+        try {
+            await sendRegistrationEmail(guestData);
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError);
+            // Don't fail the request if email fails
+        }
+
         res.json({
+            success: true,
             message: 'Registration successful',
             tableNumber: company.table_number,
             guestId: guestResult.rows[0].id
