@@ -4,11 +4,11 @@ require('dotenv').config();
 
 // Database configuration - Update these with your PostgreSQL credentials
 const pool = new Pool({
-  user: process.env.DB_USER ||'postgres',      // Replace with your PostgreSQL username
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'event_manager',  // Your database name
-  password: process.env.DB_PASSWORD || 'postgres',  // Replace with your PostgreSQL password
-  port: process.env.DB_PORT || 5432,        // Default PostgreSQL port
+  user: process.env.DB_USER ,      // Replace with your PostgreSQL username
+  host: process.env.DB_HOST ,
+  database: process.env.DB_NAME ,  // Your database name
+  password: process.env.DB_PASSWORD,  // Replace with your PostgreSQL password
+  port: process.env.DB_PORT,        // Default PostgreSQL port
 });
 
 // Initialize database
