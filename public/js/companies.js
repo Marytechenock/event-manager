@@ -1,34 +1,35 @@
-// Global cache for validation
+// Global cache for validation (in-memory only)
 let allCompanies = [];
 
-// Auth check on load
+// Auth check removed - server handles this!
 document.addEventListener('DOMContentLoaded', function () {
-    if (!localStorage.getItem('adminLoggedIn')) {
-        window.location.href = 'admin-login.html';
-        return;
-    }
+    // No localStorage check - if page loaded, server says you're authenticated
     loadCompanies();
 });
 
-// Load companies and cache for validation
+// Load companies from API
 function loadCompanies() {
-    fetch('/api/companies')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch companies');
-            return response.json();
-        })
-        .then(companies => {
-            allCompanies = companies; // Cache for duplicate checks
-            companies.forEach(company => {
-                localStorage.setItem(`company_${company.id}`, JSON.stringify(company));
-            });
-            renderCompanies(companies);
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            document.getElementById('companiesList').innerHTML = 
-                `<tr><td colspan="6" class="empty-state">Failed to load companies. Please try again.</td></tr>`;
-        });
+    fetch('/api/companies', {
+        credentials: 'same-origin' // Critical for sessions
+    })
+    .then(response => {
+        if (response.status === 401) {
+            // Session expired - redirect to login
+            window.location.href = '/admin';
+            return;
+        }
+        if (!response.ok) throw new Error('Failed to fetch companies');
+        return response.json();
+    })
+    .then(companies => {
+        allCompanies = companies; // In-memory cache only
+        renderCompanies(companies);
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        document.getElementById('companiesList').innerHTML = 
+            `<tr><td colspan="6" class="empty-state">Failed to load companies. Please try again.</td></tr>`;
+    });
 }
 
 // Render companies as table rows
@@ -89,7 +90,6 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
     const tableNumber = document.getElementById('tableNumber').value.trim().toUpperCase();
     const totalChairs = parseInt(document.getElementById('totalChairs').value);
 
-    // Validation
     if (!name || !tableNumber || !totalChairs) {
         alert('Please fill in all required fields.');
         return;
@@ -99,33 +99,35 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
     const normalizedName = name.toLowerCase();
     const normalizedTable = tableNumber;
 
-    // Check for duplicate company name
+    // Check duplicates using in-memory cache
     const isNameDuplicate = allCompanies.some(company => 
         company.name.toLowerCase() === normalizedName
     );
-
-    // Check for duplicate table number
     const isTableDuplicate = allCompanies.some(company => 
         company.table_number.toUpperCase() === normalizedTable
     );
 
     if (isNameDuplicate) {
-        alert('Company name already exists. Please choose a different name.');
+        alert('Company name already exists.');
         return;
     }
-
     if (isTableDuplicate) {
-        alert('Table number already exists. Please choose a different table number.');
+        alert('Table number already exists.');
         return;
     }
 
-    // Submit to backend
+    // Submit to backend with credentials
     fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin', // Critical
         body: JSON.stringify({ name, table_number: tableNumber, total_chairs: totalChairs })
     })
     .then(response => {
+        if (response.status === 401) {
+            window.location.href = '/admin';
+            return;
+        }
         if (!response.ok) {
             return response.json().then(err => {
                 throw new Error(err.error || 'Server error');
@@ -134,10 +136,9 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
         return response.json();
     })
     .then(() => {
-        // Reset form
         document.getElementById('addCompanyForm').reset();
         document.getElementById('totalChairs').value = 10;
-        loadCompanies(); // Refresh list and cache
+        loadCompanies(); // Refresh cache
     })
     .catch(err => {
         console.error('Error:', err);
@@ -147,12 +148,12 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
 
 // Show edit form
 function editCompany(companyId) {
-    const companyData = localStorage.getItem(`company_${companyId}`);
-    if (!companyData) {
-        alert('Company data not found. Please refresh and try again.');
+    // Find company in current cache (not localStorage!)
+    const company = allCompanies.find(c => c.id == companyId);
+    if (!company) {
+        alert('Company not found. Please refresh the page.');
         return;
     }
-    const company = JSON.parse(companyData);
 
     const row = document.querySelector(`tr[data-id="${companyId}"]`);
     row.innerHTML = `
@@ -198,36 +199,34 @@ function saveCompany(companyId, e) {
         return;
     }
 
-    // Normalize for comparison
-    const normalizedName = name.toLowerCase();
-    const normalizedTable = tableNumber;
-
-    // Check for duplicate name (exclude current company)
+    // Check duplicates (excluding current company)
     const isNameDuplicate = allCompanies.some(company => 
-        company.id !== companyId && company.name.toLowerCase() === normalizedName
+        company.id != companyId && company.name.toLowerCase() === name.toLowerCase()
     );
-
-    // Check for duplicate table (exclude current company)
     const isTableDuplicate = allCompanies.some(company => 
-        company.id !== companyId && company.table_number.toUpperCase() === normalizedTable
+        company.id != companyId && company.table_number.toUpperCase() === tableNumber
     );
 
     if (isNameDuplicate) {
-        alert('Company name already exists. Please choose a different name.');
+        alert('Company name already exists.');
         return;
     }
-
     if (isTableDuplicate) {
-        alert('Table number already exists. Please choose a different table number.');
+        alert('Table number already exists.');
         return;
     }
 
     fetch(`/api/companies/${companyId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin', // Critical
         body: JSON.stringify({ name, table_number: tableNumber, total_chairs: totalChairs })
     })
     .then(response => {
+        if (response.status === 401) {
+            window.location.href = '/admin';
+            return;
+        }
         if (!response.ok) {
             return response.json().then(err => {
                 throw new Error(err.error || 'Server error');
@@ -236,7 +235,7 @@ function saveCompany(companyId, e) {
         return response.json();
     })
     .then(() => {
-        loadCompanies(); // Refresh list and cache
+        loadCompanies(); // Refresh cache
     })
     .catch(err => {
         console.error('Error:', err);
@@ -251,12 +250,17 @@ function cancelEdit(companyId) {
 
 // Delete company
 function deleteCompany(companyId) {
-    if (!confirm('Are you sure you want to delete this company? This cannot be undone.')) return;
+    if (!confirm('Are you sure you want to delete this company?')) return;
 
     fetch(`/api/companies/${companyId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'same-origin' // Critical
     })
     .then(response => {
+        if (response.status === 401) {
+            window.location.href = '/admin';
+            return;
+        }
         if (!response.ok) {
             return response.json().then(err => {
                 throw new Error(err.error || 'Server error');

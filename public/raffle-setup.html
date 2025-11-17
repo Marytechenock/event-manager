@@ -4,86 +4,112 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Raffle Setup</title>
+  <!-- Shared admin styles (sidebar, layout, fonts) -->
+  <link rel="stylesheet" href="css/manage-companies.css">
+  <!-- Page-specific styles (raffle form, header, etc.) -->
   <link rel="stylesheet" href="css/raffle-setup.css">
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <img src="assets/logo.png" alt="Logo">
-    </div>
+  <div class="admin-container">
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
 
+    <!-- Shared Sidebar (loaded dynamically) -->
+    <div id="sidebar-container"></div>
 
-    <ul class="sidebar-menu">
-      <li>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 10h-2V7h2v6zm4 0h-2V7h2v6z"/>
-        </svg>
-        <a href="admin-dashboard.html">Overview</a>
-      </li>
-      <li>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-        </svg>
-        <a href="manage-companies.html">Manage Companies</a>
-      </li>
-      <li class="active">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M20 4H4v2h16V4zm0 10v-2c0-2.67-4-4-4-4H8c0 0-4 1.33-4 4v2H2v2h2v4h16v-4h2v-2h-2zm-8 4H8v-4h8v4zm0-6c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/>
-        </svg>
-        <a href="#">Raffle Selection</a>
-      </li>
-      <li class="logout">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-        </svg>
-        <a href="admin-login.html">Logout</a>
-      </li>
-    </ul>
-  </div>
+    <!-- Main Content -->
+    <div class="admin-main">
+      <div class="header-bar">
+        <h2 class="header-title">Raffle Setup</h2>
+        <div class="header-actions">
+          <button class="back-btn" onclick="window.location='admin-dashboard.html'">← Back</button>
+        </div>
+      </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="header-bar">
-      <h2 class="header-title">Raffle Setup</h2>
-      <div class="header-actions">
-        <button class="back-btn" onclick="window.location='admin-dashboard.html'">← Back</button>
+      <div class="container">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" fill="#ff00ff"/>
+            <path d="M12 8l4 4-4 4" stroke="white" stroke-width="2" fill="none"/>
+          </svg>
+          Raffle Setup
+        </h1>
+        <form id="raffleForm">
+          <div class="form-group">
+            <label for="companyName">Company Sponsoring the Raffle</label>
+            <input type="text" id="companyName" placeholder="e.g., MaryTechnock" required>
+          </div>
+          <div class="form-group">
+            <label for="totalTickets">Number of Tickets Issued (Participants)</label>
+            <input type="number" id="totalTickets" min="1" value="10" required>
+          </div>
+          <button type="submit">Start Raffle</button>
+        </form>
       </div>
     </div>
-
-    <div class="container">
-      <h1>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="8" fill="#ff00ff"/>
-          <path d="M12 8l4 4-4 4" stroke="white" stroke-width="2" fill="none"/>
-        </svg>
-        Raffle Setup
-      </h1>
-      <form id="raffleForm">
-        <div class="form-group">
-          <label for="companyName">Company Sponsoring the Raffle</label>
-          <input type="text" id="companyName" placeholder="e.g., MaryTechnock" required>
-        </div>
-        <div class="form-group">
-          <label for="totalTickets">Number of Tickets Issued (Participants)</label>
-          <input type="number" id="totalTickets" min="1" value="10" required>
-        </div>
-        <button type="submit">Start Raffle</button>
-      </form>
-    </div>
   </div>
 
+  <!-- Load Shared Sidebar -->
   <script>
-    document.getElementById('raffleForm').addEventListener('submit', function(e) {
+    // Load sidebar from external file
+    fetch('sidebar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        setActiveMenuItem();
+      })
+      .catch(err => console.error('Failed to load sidebar:', err));
+
+    // Auto-highlight current page
+    function setActiveMenuItem() {
+      const currentPage = window.location.pathname.split('/').pop();
+      document.querySelectorAll('.menu-item').forEach(item => {
+        const href = item.getAttribute('href');
+        if (href === currentPage) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    // Sidebar toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar?.classList.toggle('open');
+    }
+
+    // Shared logout function
+    function logout() {
+      localStorage.removeItem('adminLoggedIn');
+      window.location.href = 'admin-login.html';
+    }
+
+    // Close sidebar on outside click (mobile)
+    document.addEventListener('click', function(e) {
+      const sidebar = document.querySelector('.sidebar');
+      const toggle = document.querySelector('.sidebar-toggle');
+      if (window.innerWidth <= 1024 && sidebar && !sidebar.contains(e.target) && !toggle?.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    });
+  </script>
+
+  <!-- Raffle Form Logic -->
+  <script>
+    document.getElementById('raffleForm')?.addEventListener('submit', function(e) {
       e.preventDefault();
-      
       const company = document.getElementById('companyName').value.trim();
       const tickets = document.getElementById('totalTickets').value;
-      
+
       if (!company || isNaN(tickets) || tickets < 1) {
         alert("Please enter a valid company name and number of tickets.");
         return;
       }
-      
+
       const url = `raffle-wheel.html?company=${encodeURIComponent(company)}&tickets=${tickets}`;
       window.location.href = url;
     });
