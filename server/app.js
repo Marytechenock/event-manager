@@ -112,4 +112,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`MAZ Event App running on http://localhost:${PORT}`);
+  console.log(`Admin running on http://localhost:${PORT}/admin`);
 });

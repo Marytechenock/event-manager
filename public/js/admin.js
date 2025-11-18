@@ -83,8 +83,22 @@ function loadDashboardData() {
                 availableChairs += (company.total_chairs - company.chairs_occupied);
             });
 
+            // Update chair counts
             document.getElementById('availableChairs').textContent = availableChairs;
             document.getElementById('occupiedChairs').textContent = occupiedChairs;
+
+            // === UPDATE UTILIZATION PERCENTAGES ===
+            if (totalChairs > 0) {
+                const availablePercent = Math.round((availableChairs / totalChairs) * 100);
+                const occupiedPercent = Math.round((occupiedChairs / totalChairs) * 100);
+                
+                document.getElementById('availableChairsUtil').textContent = `${availablePercent}%`;
+                document.getElementById('occupiedChairsUtil').textContent = `${occupiedPercent}%`;
+            } else {
+                // No chairs assigned → show 0%
+                document.getElementById('availableChairsUtil').textContent = '0%';
+                document.getElementById('occupiedChairsUtil').textContent = '0%';
+            }
 
             updateCompaniesStatus(data.companies);
             updateRecentGuests(data.guests.slice(0, 5));
@@ -222,3 +236,67 @@ function updateRecentGuests(guests) {
         container.appendChild(row);
     });
 }
+
+// === EXCEL EXPORT FUNCTIONALITY ===
+// Load SheetJS from CDN
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// Export filtered or full guest list to Excel
+async function exportToExcel() {
+  try {
+    // Load SheetJS dynamically
+    await loadScript('https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js');
+
+    // Use filtered data if search is active, else use full list
+    let exportData = allGuestsData;
+    if (currentSearchTerm) {
+      exportData = allGuestsData.filter(guest =>
+        (guest.name || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.surname || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.email || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.phone || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.company_name || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.position || '').toLowerCase().includes(currentSearchTerm)
+      );
+    }
+
+    // Format data for Excel (map to clean objects)
+    const worksheetData = exportData.map(guest => ({
+      Name: guest.name || '',
+      Surname: guest.surname || '',
+      Email: guest.email || '',
+      Phone: guest.phone || '',
+      Company: guest.company_name || 'N/A',
+      Position: guest.position || 'N/A',
+      Table: guest.table_number || 'N/A',
+      Registered: new Date(guest.registered_at).toLocaleString()
+    }));
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(worksheetData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Attendees');
+
+    // Trigger download
+    XLSX.writeFile(wb, `attendees_${new Date().toISOString().slice(0,10)}.xlsx`);
+  } catch (error) {
+    console.error('Export failed:', error);
+    alert('Failed to export data. Please try again.');
+  }
+}
+
+// Attach export button handler
+document.addEventListener('DOMContentLoaded', () => {
+  const exportBtn = document.getElementById('exportBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportToExcel);
+  }
+});
