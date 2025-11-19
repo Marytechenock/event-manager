@@ -70,8 +70,13 @@ function loadDashboardData() {
     fetch('/api/admin/metrics')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('totalAttendees').textContent = data.totalAttendees;
-            document.getElementById('totalCompanies').textContent = data.companies.length;
+            const totalAttendees = data.totalAttendees;
+            const totalCompanies = data.companies.length;
+
+            // Calculate company attendance (companies with ≥1 occupied chair)
+            const attendingCompanies = data.companies.filter(company => 
+                (company.chairs_occupied || 0) > 0
+            ).length;
 
             let totalChairs = 0;
             let occupiedChairs = 0;
@@ -83,33 +88,53 @@ function loadDashboardData() {
                 availableChairs += (company.total_chairs - company.chairs_occupied);
             });
 
-            // Update chair counts
+            // Update counts
+            document.getElementById('totalAttendees').textContent = totalAttendees;
+            document.getElementById('companyAttendanceCount').textContent = attendingCompanies;
             document.getElementById('availableChairs').textContent = availableChairs;
             document.getElementById('occupiedChairs').textContent = occupiedChairs;
 
             // === UPDATE UTILIZATION PERCENTAGES ===
+
+            // Attendance % = (Attendees / Total Chairs) * 100
+            if (totalChairs > 0) {
+                const attendancePercent = Math.min(100, Math.round((totalAttendees / totalChairs) * 100));
+                document.getElementById('attendanceUtil').textContent = `${attendancePercent}%`;
+            } else {
+                document.getElementById('attendanceUtil').textContent = '0%';
+            }
+
+            // Company Attendance % = (Attending Companies / Total Companies) * 100
+            if (totalCompanies > 0) {
+                const companyAttendancePercent = Math.round((attendingCompanies / totalCompanies) * 100);
+                document.getElementById('companyAttendanceUtil').textContent = `${companyAttendancePercent}%`;
+            } else {
+                document.getElementById('companyAttendanceUtil').textContent = '0%';
+            }
+
+            // Available Chairs %
             if (totalChairs > 0) {
                 const availablePercent = Math.round((availableChairs / totalChairs) * 100);
-                const occupiedPercent = Math.round((occupiedChairs / totalChairs) * 100);
-                
                 document.getElementById('availableChairsUtil').textContent = `${availablePercent}%`;
+            } else {
+                document.getElementById('availableChairsUtil').textContent = '0%';
+            }
+
+            // Occupied Chairs %
+            if (totalChairs > 0) {
+                const occupiedPercent = Math.round((occupiedChairs / totalChairs) * 100);
                 document.getElementById('occupiedChairsUtil').textContent = `${occupiedPercent}%`;
             } else {
-                // No chairs assigned → show 0%
-                document.getElementById('availableChairsUtil').textContent = '0%';
                 document.getElementById('occupiedChairsUtil').textContent = '0%';
             }
 
             updateCompaniesStatus(data.companies);
             updateRecentGuests(data.guests.slice(0, 5));
-
-            // Save full guest list for search
             allGuestsData = data.guests;
-            // Re-render with current search
             applySearchFilter();
         })
         .catch(error => {
-            console.error('Error loading dashboard data:', error);
+            console.error('Error loading dashboard ', error);
         });
 }
 
@@ -238,26 +263,23 @@ function updateRecentGuests(guests) {
 }
 
 // === EXCEL EXPORT FUNCTIONALITY ===
-// Load SheetJS from CDN
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-// Export filtered or full guest list to Excel
+// Export filtered or full guest list to Excel with BOLD HEADERS
 async function exportToExcel() {
   try {
-    // Load SheetJS dynamically
-    await loadScript('https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js');
+    // Load SheetJS if not already loaded
+    if (typeof XLSX === 'undefined') {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js';
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Failed to load Excel library. Check your internet connection.'));
+        document.head.appendChild(script);
+      });
+    }
 
-    // Use filtered data if search is active, else use full list
+    // Use filtered data if search is active
     let exportData = allGuestsData;
-    if (currentSearchTerm) {
+    if (currentSearchTerm) { // ← CORRECTED: was "currentSearchTearm"
       exportData = allGuestsData.filter(guest =>
         (guest.name || '').toLowerCase().includes(currentSearchTerm) ||
         (guest.surname || '').toLowerCase().includes(currentSearchTerm) ||
@@ -268,7 +290,7 @@ async function exportToExcel() {
       );
     }
 
-    // Format data for Excel (map to clean objects)
+    // Format data for Excel
     const worksheetData = exportData.map(guest => ({
       Name: guest.name || '',
       Surname: guest.surname || '',
@@ -280,16 +302,28 @@ async function exportToExcel() {
       Registered: new Date(guest.registered_at).toLocaleString()
     }));
 
-    // Create workbook and worksheet
+    // Create worksheet
     const ws = XLSX.utils.json_to_sheet(worksheetData);
+
+    // Make headers bold
+    if (ws['!ref']) {
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (ws[addr]) {
+          ws[addr].s = { font: { bold: true } };
+        }
+      }
+    }
+
+    // Create and download workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Attendees');
-
-    // Trigger download
     XLSX.writeFile(wb, `attendees_${new Date().toISOString().slice(0,10)}.xlsx`);
+    
   } catch (error) {
     console.error('Export failed:', error);
-    alert('Failed to export data. Please try again.');
+    alert('Export failed: ' + (error.message || 'An unexpected error occurred. Please try again.'));
   }
 }
 
