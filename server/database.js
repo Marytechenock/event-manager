@@ -2,20 +2,19 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-// Database configuration - Update these with your PostgreSQL credentials
+// Database configuration
 const pool = new Pool({
-  user: process.env.DB_USER,      // Replace with your PostgreSQL username
+  user: process.env.DB_USER,
   host: process.env.DB_HOST,
-  database: process.env.DB_NAME,  // Your database name
-  password: process.env.DB_PASSWORD,  // Replace with your PostgreSQL password
-  port: process.env.DB_PORT,        // Default PostgreSQL port
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 // Initialize database
 async function initializeDatabase() {
   const client = await pool.connect();
   try {
-    // Start transaction
     await client.query('BEGIN');
 
     // Create tables
@@ -33,8 +32,8 @@ async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) UNIQUE NOT NULL,
         table_number VARCHAR(50) NOT NULL,
-        total_chairs INTEGER NOT NULL,
-        chairs_occupied INTEGER DEFAULT 0,
+        total_chairs INTEGER NOT NULL CHECK (total_chairs > 0),
+        chairs_occupied INTEGER DEFAULT 0 CHECK (chairs_occupied >= 0),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -49,18 +48,25 @@ async function initializeDatabase() {
         company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
         position VARCHAR(255) NOT NULL,
         table_number VARCHAR(50),
-        registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        lucky_number INTEGER UNIQUE  -- CHANGED FROM VARCHAR TO INTEGER + UNIQUE
       )
     `);
 
-    // Create default admin if not exists
+    // Create index for performance
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_guests_lucky_number 
+      ON guests(lucky_number)
+    `);
+
+    // Create default admin
     const defaultPassword = await bcrypt.hash('admin123', 10);
     await client.query(
       'INSERT INTO admins (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
       ['admin', defaultPassword]
     );
 
-    // Add sample companies for testing
+    // Add sample companies
     await client.query(
       `INSERT INTO companies (name, table_number, total_chairs) VALUES
        ($1, $2, $3), ($4, $5, $6), ($7, $8, $9)
@@ -83,7 +89,7 @@ async function initializeDatabase() {
   }
 }
 
-// Test the database connection
+// Test database connection
 async function testConnection() {
   try {
     const res = await pool.query('SELECT NOW()');
@@ -95,10 +101,8 @@ async function testConnection() {
   }
 }
 
-// Initialize the database when this module is loaded
 initializeDatabase().catch(console.error);
 
-// Export the pool and utility functions
 module.exports = {
   query: (text, params) => pool.query(text, params),
   getClient: () => pool.connect(),

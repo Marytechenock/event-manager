@@ -3,6 +3,46 @@ const db = require('../database');
 const router = express.Router();
 const { sendRegistrationEmail } = require('../services/emailService');
 
+// Get total chairs across all companies
+async function getTotalChairs(client) {
+  const result = await client.query(
+    'SELECT COALESCE(SUM(total_chairs), 0) as total FROM companies'
+  );
+  return parseInt(result.rows[0].total) || 0;
+}
+
+// Get all used lucky numbers
+async function getUsedLuckyNumbers(client) {
+  const result = await client.query(
+    'SELECT lucky_number FROM guests WHERE lucky_number IS NOT NULL'
+  );
+  return new Set(result.rows.map(row => row.lucky_number));
+}
+
+// Generate unique lucky number (1 to total_chairs)
+async function generateLuckyNumber(client) {
+  const totalChairs = await getTotalChairs(client);
+  if (totalChairs === 0) {
+    return null;
+  }
+
+  const usedNumbers = await getUsedLuckyNumbers(client);
+  const availableNumbers = [];
+  
+  for (let i = 1; i <= totalChairs; i++) {
+    if (!usedNumbers.has(i)) {
+      availableNumbers.push(i);
+    }
+  }
+
+  if (availableNumbers.length === 0) {
+    return null;
+  }
+
+  const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+  return availableNumbers[randomIndex];
+}
+
 // Register new guest
 router.post('/register', async (req, res) => {
     const { name, surname, email, phone, company_id, position } = req.body;
@@ -43,12 +83,21 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        // Register guest
+        // Generate lucky number BEFORE registering guest
+        const luckyNumber = await generateLuckyNumber(client);
+        if (luckyNumber === null) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ 
+              error: 'Registration closed: no more lucky numbers available' 
+            });
+        }
+
+        // Register guest WITH lucky number
         const guestResult = await client.query(
-            `INSERT INTO guests (name, surname, email, phone, company_id, position, table_number)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
-             RETURNING id`,
-            [name, surname, email, phone, company_id, position, company.table_number]
+            `INSERT INTO guests (name, surname, email, phone, company_id, position, table_number, lucky_number)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             RETURNING id, lucky_number`,
+            [name, surname, email, phone, company_id, position, company.table_number, luckyNumber]
         );
 
         // Update chairs occupied
@@ -61,7 +110,7 @@ router.post('/register', async (req, res) => {
 
         await client.query('COMMIT');
 
-        // Prepare guest data for email
+        // Prepare guest data for email (include lucky number)
         const guestData = {
             name,
             surname,
@@ -69,10 +118,11 @@ router.post('/register', async (req, res) => {
             phone,
             company_name: company.name,
             position,
-            table_number: company.table_number
+            table_number: company.table_number,
+            lucky_number: guestResult.rows[0].lucky_number // Add to email
         };
 
-        console.log('Guest data: ' + guestData)
+        console.log('Guest data:', guestData);
 
         // Send confirmation email
         try {
@@ -86,11 +136,20 @@ router.post('/register', async (req, res) => {
             success: true,
             message: 'Registration successful',
             tableNumber: company.table_number,
+            luckyNumber: guestResult.rows[0].lucky_number, // Include in response
             guestId: guestResult.rows[0].id
         });
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Error in guest registration:', error);
+        
+        // Handle unique constraint violation (race condition)
+        if (error.code === '23505' && error.constraint?.includes('lucky_number')) {
+            return res.status(500).json({ 
+              error: 'Lucky number conflict. Please try again.' 
+            });
+        }
+        
         res.status(500).json({ error: 'An error occurred during registration' });
     } finally {
         client.release();

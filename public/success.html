@@ -4,21 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Successful Registration</title>
-    <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
-    <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="css/success.css">
-    <style>  
-    </style>
 </head>
 <body>
-    <!-- Top Logo Area -->
     <div class="top-logo">
-        <!-- Replace src with your actual logo path -->
         <img src="/assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
     </div>
-
 
     <h1 class="hero-title">
         Registration <br>
@@ -26,53 +19,58 @@
     </h1>
 
     <p class="success-message">
-            Thank you for registering for the MAZ <br/> 
-            <span><p class = success-mess>Superbrand Awards 2025</p></span>
+        Thank you for registering for the MAZ <br/>
+        <span class="success-mess">Superbrand Awards 2025</span>
     </p>
 
+    <!-- Lucky Number Section -->
+    <div class="table-assignment">
+        <div class="table-label">Your Lucky Number</div>
+        <div class="table-number" id="luckyNumber">###</div>
+        <div class="table-instruction">Keep this number for raffle draws!</div>
+    </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Table Assignment -->
-        <div class="table-assignment">
-            <div class="table-label">Your Table Assignment</div>
-            <div class="table-number" id="tableNumber" data-text="Table 3">Table 3</div>
-            <div class="table-instruction">Please proceed to your assigned table</div>
-        </div>
-
+    <!-- Table Assignment Section -->
+    <div class="table-assignment">
+        <div class="table-label">Your Table Assignment</div>
+        <div class="table-number" id="tableNumber">TBD</div>
+        <div class="table-instruction">Please proceed to your assigned table</div>
     </div>
 
     <!-- Download Button -->
-        <a href="downloads/event-program.pdf" class="btn-luxury" download>
-            View and download the event program
-        </a>
+    <a id="program-btn" href="downloads/event-program.pdf" class="btn-luxury" target="_blank">
+        View and download the event program
+    </a>
 
-       <button class="exit-btn" onclick="exitGracefully()">Exit</button>
+    <button class="exit-btn" onclick="exitGracefully()">Exit</button>
 
-        <div class="sadc-text">Leading digital transformation in SADC</div>
+    <div class="sadc-text">Leading digital transformation in SADC</div>
 
-        <!-- Bottom Logo Area -->
-        <div class="bottom-logo">
-            <img src="assets/images/footer-logo.png"/>
-        </div>
+    <div class="bottom-logo">
+        <img src="assets/images/footer-logo.png" />
     </div>
 
-    <!-- Confetti Script -->
     <script>
-            function exitGracefully() {
-                window.location.href = 'index.html';
-            }
+        function exitGracefully() {
+            window.location.href = 'index.html';
+        }
 
-        // Get table number from URL
+        // Get parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
         const tableNumber = urlParams.get('table');
+        const luckyNumber = urlParams.get('lucky');
+
+        // Apply # prefix and update
+        if (luckyNumber) {
+            document.getElementById('luckyNumber').textContent = '#' + luckyNumber;
+        }
         if (tableNumber) {
             document.getElementById('tableNumber').textContent = tableNumber;
         }
 
-        // Start confetti on load
+        // Confetti
         function startConfetti() {
-            const duration = 5 * 1000; // 40 seconds
+            const duration = 5 * 1000;
             const animationEnd = Date.now() + duration;
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
@@ -82,7 +80,6 @@
 
             const interval = setInterval(() => {
                 const timeLeft = animationEnd - Date.now();
-
                 if (timeLeft <= 0) {
                     return clearInterval(interval);
                 }
@@ -97,7 +94,6 @@
             }, 250);
         }
 
-        // Trigger confetti when page loads
         window.addEventListener('load', startConfetti);
     </script>
 </body>

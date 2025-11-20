@@ -1,381 +1,459 @@
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      min-height: 100vh;
-    }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  min-height: 100vh;
+}
 
-    .container {
-      max-width: 1080px;
-      margin: 30px auto;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(209, 223, 229, 0.3);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 215, 0, 0.1);
-      position: relative;
-      z-index: 10;
-    }
+.container {
+  max-width: 1080px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(209, 223, 229, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
 
-    .exit-btn {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      width: 30px;
-      height: 40px;
-      background: rgba(255, 215, 0, 0.1);
-      color: #1a1706;
-      /*border: 2px solid #FFD700;*/
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      z-index: 100;
-    }
+.exit-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  width: 30px;
+  height: 40px;
+  background: rgba(255, 215, 0, 0.1);
+  color: #1a1706;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
 
-    .exit-btn:hover {
-      background: #FFD700;
-      color: #888888;
-      transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    }
+.exit-btn:hover {
+  background: #FFD700;
+  color: #888888;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
 
-    h1 {
-      background: linear-gradient(45deg, #080700, #FFEC8B);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 2.5em;
-      font-weight: 700;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-      padding: 0 50px; /* Add padding to account for exit button */
-    }
+h1 {
+  background: linear-gradient(45deg, #080700, #FFEC8B);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2.5em;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+  padding: 0 50px;
+}
 
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      margin: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
 
-    #drawBtn {
-      background: linear-gradient(45deg, #FFD700, #D4AF37);
-      color: #1a1a1a;
-    }
-    #drawBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-    }
+#drawBtn {
+  background: linear-gradient(45deg, #FFD700, #D4AF37);
+  color: #1a1a1a;
+}
+#drawBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
 
-    #resetBtn {
-      background: linear-gradient(45deg, #666, #444);
-      color: white;
-    }
-    #resetBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
-    }
+#resetBtn {
+  background: linear-gradient(45deg, #666, #444);
+  color: white;
+}
+#resetBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
 
-    .wheel-container {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      margin: 30px auto;
-      transition: all 0.3s ease;
-    }
+.wheel-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 30px auto;
+  transition: all 0.3s ease;
+}
 
-    #wheel {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 50%;
-      box-shadow:
-        0 0 0 8px rgba(255, 215, 0, 0.3),
-        0 0 30px rgba(255, 215, 0, 0.2),
-        inset 0 0 20px rgba(0, 0, 0, 0.3);
-      background: #ffffff;
-    }
+#wheel {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 8px rgba(255, 215, 0, 0.3),
+    0 0 30px rgba(255, 215, 0, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+}
 
-    .pointer {
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 35px solid #141101;
-      z-index: 20;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-    }
+.pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 35px solid #141101;
+  z-index: 20;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
 
-    .winner-display {
-      font-size: 32px;
-      font-weight: bold;
-      background: linear-gradient(45deg, #FFD700, #FFA500);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin: 20px 0;
-      text-align: center;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-    }
+.winner-display {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 20px 0;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
 
-    #winners {
-      margin-top: 20px;
-      text-align: left;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      max-height: 150px;
-      overflow-y: auto;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      backdrop-filter: blur(5px);
-    }
+#winners {
+  margin-top: 20px;
+  text-align: left;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
 
-    .winner-item {
-      margin: 8px 0;
-      font-weight: bold;
-      color: #FFD700;
-      padding: 5px 10px;
-      background: rgba(255, 215, 0, 0.1);
-      border-radius: 5px;
-      border-left: 3px solid #FFD700;
-    }
+.winner-item {
+  margin: 8px 0;
+  font-weight: bold;
+  color: #FFD700;
+  padding: 5px 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 5px;
+  border-left: 3px solid #FFD700;
+}
 
-    /* === WINNER MODAL === */
-    #winnerModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.6s ease, visibility 0.6s;
-      overflow: hidden;
-    }
+/* === WINNER MODAL === */
+#winnerModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s;
+  overflow: hidden;
+}
 
-    #winnerModal.show {
-      opacity: 1;
-      visibility: visible;
-    }
+#winnerModal.show {
+  opacity: 1;
+  visibility: visible;
+}
 
-    #modalContent {
-      text-align: center;
-      z-index: 10;
-      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      opacity: 0;
-    }
+#modalContent {
+  text-align: center;
+  z-index: 10;
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+  margin-bottom: 40px;
+  position: relative; /* 👈 ONLY NEW LINE: enables absolute positioning for Close button */
+}
 
-    #modalSponsorHeader {
-      font-size: 24px;
-      color: #FFD700;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
-      font-weight: bold;
-    }
+#modalSponsorHeader {
+  font-size: 24px;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+  font-weight: bold;
+}
 
-    .trophy {
-      font-size: 120px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-      color: #FFD700;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
+#winnerNumber {
+  font-size: 160px;
+  font-weight: 900;
+  background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  animation: numberGlow 3s ease-in-out infinite;
+}
 
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-      }
-      to {
-        text-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8);
-      }
-    }
+@keyframes numberGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6);
+  }
+}
 
-    #winnerNumber {
-      font-size: 160px;
-      font-weight: 900;
-      background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin: 0;
-      text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-      animation: numberGlow 3s ease-in-out infinite;
-    }
+#congratsText {
+  font-size: 42px;
+  color: #FFD700;
+  margin-top: 20px;
+  font-weight: bold;
+  text-shadow: 0 2px 15px rgba(255, 215, 0, 0.5);
+}
 
-    @keyframes numberGlow {
-      0%, 100% {
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      }
-      50% {
-        text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6);
-      }
-    }
+/* ✅ Close button — now in top-right of modal content */
+#closeModalBtn {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  padding: 12px 24px;
+  font-size: 18px;
+  background: linear-gradient(45deg, #FFD700, #D4AF37);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 20;
+}
 
-    #congratsText {
-      font-size: 42px;
-      color: #FFD700;
-      margin-top: 20px;
-      font-weight: bold;
-      text-shadow: 0 2px 15px rgba(255, 215, 0, 0.5);
-    }
+#closeModalBtn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
 
-    #closeModalBtn {
-      margin-top: 40px;
-      padding: 15px 40px;
-      font-size: 22px;
-      background: linear-gradient(45deg, #FFD700, #D4AF37);
-      color: #1a1a1a;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-      transition: all 0.3s ease;
-    }
+/* === SPONSOR LOGOS SECTION === */
+.sponsor-logos {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
 
-    #closeModalBtn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
-    }
+.sponsor-logos h3 {
+  color: #FFD700;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
 
-    .floating-dot {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 5;
-      bottom: -20px;
-    }
+.logos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  max-width: 90%;
+  margin: 0 auto;
+}
 
-    .celebration-word {
-      position: absolute;
-      color: #070600;
-      font-weight: bold;
-      font-size: 20px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-      opacity: 0.9;
-      pointer-events: none;
-      z-index: 5;
-      bottom: -20px;
-    }
+.sponsor-logo {
+  height: 50px;
+  width: auto;
+  max-width: 120px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.1);
+}
 
-    @keyframes popIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.6);
-      }
-      70% {
-        transform: scale(1.05);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
+.sponsor-logo:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
 
-    @keyframes floatUpDot {
-      to {
-        transform: translateY(-100vh) scale(1.4);
-        opacity: 0;
-      }
-    }
+.floating-dot {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 5;
+  bottom: -20px;
+}
 
-    @keyframes floatUpWord {
-      to {
-        transform: translateY(-100vh) rotate(20deg);
-        opacity: 0;
-      }
-    }
+.celebration-word {
+  position: absolute;
+  color: #070600;
+  font-weight: bold;
+  font-size: 20px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 5;
+  bottom: -20px;
+}
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .container {
-        margin: 15px;
-        padding: 15px;
-      }
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-      h1 {
-        font-size: 2em;
-        padding: 0 40px;
-      }
+@keyframes floatUpDot {
+  to {
+    transform: translateY(-100vh) scale(1.4);
+    opacity: 0;
+  }
+}
 
-      .exit-btn {
-        top: 10px;
-        right: 15px;
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-      }
+@keyframes floatUpWord {
+  to {
+    transform: translateY(-100vh) rotate(20deg);
+    opacity: 0;
+  }
+}
 
-      .winner-display {
-        font-size: 28px;
-      }
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    margin: 15px;
+    padding: 15px;
+  }
 
-      #winnerNumber {
-        font-size: 120px;
-      }
+  h1 {
+    font-size: 2em;
+    padding: 0 40px;
+  }
 
-      #congratsText {
-        font-size: 32px;
-      }
+  .exit-btn {
+    top: 10px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
 
-      .trophy {
-        font-size: 80px;
-      }
-    }
+  .winner-display {
+    font-size: 28px;
+  }
 
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.8em;
-        padding: 0 35px;
-      }
+  #winnerNumber {
+    font-size: 120px;
+  }
 
-      .exit-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 16px;
-      }
+  #congratsText {
+    font-size: 32px;
+  }
 
-      button {
-        padding: 10px 18px;
-        font-size: 14px;
-      }
+  #closeModalBtn {
+    top: -8px;
+    right: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
 
-      .winner-display {
-        font-size: 24px;
-      }
+  .sponsor-logos {
+    bottom: 20px;
+    padding: 15px 0;
+  }
 
-      #winnerNumber {
-        font-size: 80px;
-      }
+  .logos-container {
+    gap: 15px;
+  }
 
-      #congratsText {
-        font-size: 24px;
-      }
-    }
+  .sponsor-logo {
+    height: 35px;
+    max-width: 90px;
+  }
+}
 
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8em;
+    padding: 0 35px;
+  }
 
+  .exit-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .winner-display {
+    font-size: 24px;
+  }
+
+  #winnerNumber {
+    font-size: 80px;
+  }
+
+  #congratsText {
+    font-size: 24px;
+  }
+
+  #closeModalBtn {
+    top: -6px;
+    right: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .sponsor-logos {
+    bottom: 15px;
+    padding: 10px 0;
+  }
+
+  .logos-container {
+    gap: 10px;
+  }
+
+  .sponsor-logo {
+    height: 30px;
+    max-width: 70px;
+  }
+
+  .sponsor-logos h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+}

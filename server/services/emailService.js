@@ -21,6 +21,16 @@ const getEmailTemplate = (guest) => {
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                 .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
                 .content { padding: 20px; }
+                .lucky-number { 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 15px;
+                    text-align: center;
+                    margin: 20px 0;
+                    border-radius: 8px;
+                    font-size: 24px;
+                    font-weight: bold;
+                }
                 .footer { margin-top: 20px; font-size: 0.9em; color: #666; text-align: center; }
             </style>
         </head>
@@ -33,6 +43,11 @@ const getEmailTemplate = (guest) => {
                 <div class="content">
                     <p>Hello ${guest.name} ${guest.surname},</p>
                     <p>Thank you for registering for the MAZ Superbrand Awards 2025!</p>
+                    
+                    <div class="lucky-number">
+                        Your Lucky Number: ${guest.lucky_number || 'N/A'}
+                    </div>
+                    
                     <p>Here are your registration details:</p>
                     <ul>
                         <li><strong>Name:</strong> ${guest.name} ${guest.surname}</li>
@@ -42,6 +57,7 @@ const getEmailTemplate = (guest) => {
                         <li><strong>Position:</strong> ${guest.position || 'N/A'}</li>
                         <li><strong>Table Number:</strong> ${guest.table_number || 'Will be assigned'}</li>
                     </ul>
+                    <p><strong>Keep your lucky number safe!</strong> It will be used for raffle draws during the event.</p>
                     <p>We look forward to seeing you at the event!</p>
                 </div>
                 <div class="footer">
