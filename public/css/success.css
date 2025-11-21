@@ -45,6 +45,27 @@ body {
     overflow-y: auto;
 }
 
+.containerr {
+    background-color: #333333;
+    width: 100%;
+    /* Reduced max-width for phones */
+    max-width: 375px; /* ideal for most mobiles */
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.1rem; /* vertical > horizontal on small screens */
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    /* Prevent overflow on super-short screens */
+    max-height: 90dvh;
+    overflow-y: auto;
+}
+
+
 /* Ensure no scrollbars on desktop by default */
 @media (min-height: 600px) {
     .container {
@@ -114,6 +135,12 @@ body {
 .table-assignment {
     margin: 0.5rem 0;
     width: 100%;
+}
+
+.tabl-label{
+    color: white;
+    font-weight: 900;
+
 }
 
 .table-label {
@@ -209,8 +236,8 @@ body {
     background-color: #333333;
     color: white;
     border: none;
-    padding: 1.65rem 1.5rem;
-    border-radius: 20px;
+    padding: 0.65rem 0.5rem;
+    border-radius: 10px;
     font-weight: 600;
     font-size: clamp(0.875rem, 3.2vw, 1rem);
     cursor: pointer;
