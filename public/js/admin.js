@@ -174,7 +174,7 @@ function renderAllGuests(guests) {
             <div>${guest.company_name || 'N/A'}</div>
             <div>${guest.position || 'N/A'}</div>
             <div>${guest.table_number || 'N/A'}</div>
-            <div><strong>#${guest.lucky_number || 'N/A'}</strong></div>
+            <div><strong>${guest.lucky_number || 'N/A'}</strong></div>
         `;
 
         container.appendChild(row);
@@ -252,7 +252,7 @@ function updateRecentGuests(guests) {
             <div>${guest.email || ''}</div>
             <div>${guest.company_name || 'N/A'}</div>
             <div>${guest.table_number || 'N/A'}</div>
-            <div><strong>#${guest.lucky_number || 'N/A'}</strong></div>
+            <div><strong>${guest.lucky_number || 'N/A'}</strong></div>
         `;
 
         container.appendChild(row);
@@ -297,12 +297,12 @@ async function exportToExcel() {
       Company: guest.company_name || 'N/A',
       Position: guest.position || 'N/A',
       Table: guest.table_number || 'N/A',
-      'Lucky #': guest.lucky_number || 'N/A', 
+      'Lucky Number': guest.lucky_number || 'N/A', 
     }));
 
     // Create worksheet
     const ws = XLSX.utils.aoa_to_sheet([Object.keys(worksheetData[0] || {
-      Name: '', Surname: '', Email: '', Phone: '', Company: '', Position: '', Table: '', 'Lucky #': ''
+      Name: '', Surname: '', Email: '', Phone: '', Company: '', Position: '', Table: '', 'Lucky Number': ''
     })]);
 
     // Add data rows

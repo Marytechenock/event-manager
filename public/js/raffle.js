@@ -1,4 +1,4 @@
-// raffle.js - FULL UPDATE
+// raffle.js - FINAL VERSION WITH GOLD NAME & FULL GLOWING COMPANY LINE
 
 let canvas = document.getElementById('wheel');
 let ctx = canvas.getContext('2d');
@@ -15,7 +15,12 @@ const colors = [
   '#FFC000', '#CFB53B', '#C5B358', '#B8860B', '#AA6C39'
 ];
 
-const celebrationWords = ['🎉', '🏆', '✨', '🎊', '🤩', '👏', '🌟'];
+// Celebration words (emojis + text)
+const celebrationWords = [
+  '🎉', '🏆', '✨', '🔥', '💫',
+  'Bravo!', 'Amazing!', 'Anthony Higgins!',
+  'Congratulations!', 'You Won!', 'Jackpot!'
+];
 
 // Sponsor logos
 const sponsorLogos = [
@@ -26,7 +31,30 @@ const sponsorLogos = [
 
 let isSpawningEffects = false;
 
-// Initialize sponsor logos (unchanged)
+// Inject keyframe animations (no external CSS needed)
+(function injectAnimations() {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes floatUpDot {
+      to { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+    @keyframes floatUpWord {
+      to { transform: translateY(-100vh) rotate(15deg); opacity: 0; }
+    }
+    @keyframes numberGlow {
+      0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+      50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); }
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.6); }
+      70% { transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// Initialize sponsor logos
 function initSponsorLogos() {
   const container = document.getElementById('sponsorLogosContainer');
   container.innerHTML = '';
@@ -58,7 +86,7 @@ function initSponsorLogos() {
   });
 }
 
-// Initialize canvas
+// Initialize canvas size
 function initCanvasSize(total) {
   const container = document.querySelector('.wheel-container');
   const containerWidth = container.clientWidth;
@@ -79,7 +107,7 @@ function getUrlParameter(name) {
   return urlParams.get(name);
 }
 
-// ✅ NEW: Fetch real participants with lucky numbers
+// Fetch real participants from your API
 async function fetchParticipants() {
   try {
     const response = await fetch('/api/raffle/participants', {
@@ -95,7 +123,7 @@ async function fetchParticipants() {
   }
 }
 
-// ✅ NEW: Initialize with real data
+// Initialize raffle with real data
 async function initRaffle() {
   const company = getUrlParameter('company');
   if (!company) {
@@ -107,7 +135,6 @@ async function initRaffle() {
   sponsorName = decodeURIComponent(company);
   document.getElementById('modalSponsorName').textContent = sponsorName;
 
-  // Fetch real participants
   participants = await fetchParticipants();
   
   if (participants.length === 0) {
@@ -124,7 +151,7 @@ async function initRaffle() {
   drawWheel();
 }
 
-// ✅ UPDATED: Draw real lucky numbers on wheel
+// Draw wheel with lucky numbers
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const total = participants.length;
@@ -170,8 +197,7 @@ function drawWheel() {
       const textX = centerX + Math.cos(midAngle) * textRadius;
       const textY = centerY + Math.sin(midAngle) * textRadius;
 
-      // ✅ Display lucky number as #142
-      const luckyText = `#${participants[i].lucky_number}`;
+      const luckyText = `${participants[i].lucky_number}`;
       ctx.fillStyle = '#1a1a1a';
       ctx.font = `bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
@@ -180,7 +206,6 @@ function drawWheel() {
     }
   }
 
-  // Draw center circle
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius * 0.1, 0, 2 * Math.PI);
   ctx.fillStyle = '#1a1a1a';
@@ -192,24 +217,104 @@ function drawWheel() {
   ctx.restore();
 }
 
-// ✅ NEW: Show winner details in modal
+// ✅ Floating Effects
+function spawnFloatingDot() {
+  const modal = document.getElementById('winnerModal');
+  if (!modal || !modal.classList.contains('show')) return;
+
+  const dot = document.createElement('div');
+  dot.classList.add('floating-dot');
+  const size = Math.random() * 12 + 4;
+  dot.style.cssText = `
+    position: absolute;
+    width: ${size}px;
+    height: ${size}px;
+    left: ${Math.random() * 100}vw;
+    top: 100vh;
+    background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+    border-radius: 50%;
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 5;
+    animation: floatUpDot ${Math.random() * 4 + 3}s ease-out forwards;
+  `;
+  modal.appendChild(dot);
+
+  setTimeout(() => {
+    if (dot.parentNode === modal) modal.removeChild(dot);
+  }, 6000);
+}
+
+function spawnCelebrationWord() {
+  const modal = document.getElementById('winnerModal');
+  if (!modal || !modal.classList.contains('show')) return;
+
+  const word = document.createElement('div');
+  word.classList.add('celebration-word');
+  word.textContent = celebrationWords[Math.floor(Math.random() * celebrationWords.length)];
+  word.style.cssText = `
+    position: absolute;
+    left: ${Math.random() * 100}vw;
+    top: 100vh;
+    color: ${colors[Math.floor(Math.random() * colors.length)]};
+    font-size: ${Math.random() * 16 + 16}px;
+    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 5;
+    animation: floatUpWord ${Math.random() * 4 + 3}s ease-out forwards;
+  `;
+  modal.appendChild(word);
+
+  setTimeout(() => {
+    if (word.parentNode === modal) modal.removeChild(word);
+  }, 6000);
+}
+
+function startContinuousEffects() {
+  if (isSpawningEffects) return;
+  isSpawningEffects = true;
+
+  const interval = setInterval(() => {
+    const modal = document.getElementById('winnerModal');
+    if (!modal || !modal.classList.contains('show')) {
+      clearInterval(interval);
+      isSpawningEffects = false;
+      return;
+    }
+    spawnFloatingDot();
+    spawnCelebrationWord();
+  }, 500);
+}
+
+// ✅ SHOW WINNER MODAL — WITH GOLD NAME & FULL GLOWING COMPANY LINE
 function showWinnerModal(winner) {
-  // Update modal content
-  document.getElementById('winnerNumber').textContent = `#${winner.lucky_number}`;
-  document.getElementById('congratsText').textContent = 
-    `${winner.name} ${winner.surname}`;
+  // Update number and name
+  document.getElementById('winnerNumber').textContent = `${winner.lucky_number}`;
+  const nameEl = document.getElementById('congratsText');
+  nameEl.textContent = `${winner.name} ${winner.surname}`;
+  nameEl.style.color = '#FFD700';
+  nameEl.style.textShadow = '0 2px 8px rgba(255, 215, 0, 0.5)';
+  nameEl.style.fontWeight = 'bold';
+
+  // Update sponsor
   document.getElementById('modalSponsorName').textContent = sponsorName;
 
-  // ✅ Add winner details below
+  // Inject company & table with FULL gold glow effect
   const detailsDiv = document.getElementById('winnerDetails');
-  if (detailsDiv) detailsDiv.remove(); // Remove previous if exists
+  if (detailsDiv) detailsDiv.remove();
 
   const details = document.createElement('div');
   details.id = 'winnerDetails';
   details.innerHTML = `
-    <div style="margin-top: 15px; color: white; font-size: 18px;">
-      <p><strong>Company:</strong> ${winner.company_name || 'N/A'}</p>
-      <p><strong>Table:</strong> ${winner.table_number || 'N/A'}</p>
+    <div style="margin-top: 15px; text-align: center; font-size: 18px;">
+      <p style="color: #FFD700; text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5); font-weight: bold; letter-spacing: 0.5px;">
+        Company: ${winner.company_name || 'N/A'}
+      </p>
+      <p style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.6); margin-top: 8px;">
+        Table: ${winner.table_number || 'N/A'}
+      </p>
     </div>
   `;
   document.getElementById('modalContent').appendChild(details);
@@ -223,57 +328,19 @@ function showWinnerModal(winner) {
   startContinuousEffects();
 }
 
-// Floating effects (unchanged)
-function spawnFloatingDot() {
-  const modal = document.getElementById('winnerModal');
-  const dot = document.createElement('div');
-  dot.classList.add('floating-dot');
-  const size = Math.random() * 12 + 4;
-  dot.style.cssText = `
-    width: ${size}px;
-    height: ${size}px;
-    left: ${Math.random() * 100}vw;
-    background-color: ${colors[Math.floor(Math.random() * colors.length)]};
-    animation: floatUpDot ${Math.random() * 4 + 3}s ease-out;
-  `;
-  modal.appendChild(dot);
-}
-
-function spawnCelebrationWord() {
-  const modal = document.getElementById('winnerModal');
-  const word = document.createElement('div');
-  word.classList.add('celebration-word');
-  word.textContent = celebrationWords[Math.floor(Math.random() * celebrationWords.length)];
-  word.style.cssText = `
-    left: ${Math.random() * 100}vw;
-    color: ${colors[Math.floor(Math.random() * colors.length)]};
-    font-size: ${Math.random() * 16 + 16}px;
-    animation: floatUpWord ${Math.random() * 4 + 3}s ease-out;
-  `;
-  modal.appendChild(word);
-}
-
-function startContinuousEffects() {
-  if (isSpawningEffects) return;
-  isSpawningEffects = true;
-  setInterval(() => {
-    spawnFloatingDot();
-    spawnCelebrationWord();
-  }, 400);
-}
-
 function closeWinnerModal() {
   document.getElementById('winnerModal').classList.remove('show');
+  isSpawningEffects = false;
+  document.querySelectorAll('.floating-dot, .celebration-word').forEach(el => el.remove());
 }
 
-// ✅ UPDATED: Draw real winner
+// Draw winner with wheel spin
 function drawWinner() {
   if (drawnWinners.length >= participants.length) {
     alert("All participants have won!");
     return;
   }
 
-  // Get available participants
   const available = participants.filter(p => 
     !drawnWinners.some(w => w.lucky_number === p.lucky_number)
   );
@@ -307,12 +374,12 @@ function drawWinner() {
       drawWheel();
 
       drawnWinners.push(winner);
-      document.getElementById('winnerDisplay').textContent = `🏆 #${winner.lucky_number}`;
+      document.getElementById('winnerDisplay').textContent = `🏆 ${winner.lucky_number}`;
 
       const winnerList = document.getElementById('winnerList');
       const div = document.createElement('div');
       div.className = 'winner-item';
-      div.textContent = `#${drawnWinners.length}: #${winner.lucky_number}`;
+      div.textContent = `#${drawnWinners.length}: ${winner.lucky_number}`;
       winnerList.appendChild(div);
       winnerList.scrollTop = winnerList.scrollHeight;
 
