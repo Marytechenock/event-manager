@@ -1,9 +1,11 @@
+// raffle.js - FULL UPDATE
+
 let canvas = document.getElementById('wheel');
 let ctx = canvas.getContext('2d');
 let centerX, centerY, radius;
 
-let allNumbers = [];
-let drawnWinners = [];
+let participants = []; // Store real guest data
+let drawnWinners = []; // Store drawn guest objects
 let rotation = 0;
 let sponsorName = "";
 
@@ -13,9 +15,9 @@ const colors = [
   '#FFC000', '#CFB53B', '#C5B358', '#B8860B', '#AA6C39'
 ];
 
-const celebrationWords = [];
+const celebrationWords = ['🎉', '🏆', '✨', '🎊', '🤩', '👏', '🌟'];
 
-// Sponsor logos — update paths as needed
+// Sponsor logos
 const sponsorLogos = [
   './assets/images/top-logo.png',
   './assets/images/super.png',
@@ -24,7 +26,7 @@ const sponsorLogos = [
 
 let isSpawningEffects = false;
 
-// Initialize sponsor logos
+// Initialize sponsor logos (unchanged)
 function initSponsorLogos() {
   const container = document.getElementById('sponsorLogosContainer');
   container.innerHTML = '';
@@ -56,7 +58,7 @@ function initSponsorLogos() {
   });
 }
 
-// Initialize canvas size based on number of participants
+// Initialize canvas
 function initCanvasSize(total) {
   const container = document.querySelector('.wheel-container');
   const containerWidth = container.clientWidth;
@@ -71,48 +73,61 @@ function initCanvasSize(total) {
   radius = Math.min(centerX, centerY) - 20;
 }
 
-// Get URL parameters
+// Get URL parameter
 function getUrlParameter(name) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
 
-// Initialize raffle
-function initRaffle() {
-  const totalStr = getUrlParameter('tickets');
-  const company = getUrlParameter('company');
-  const total = parseInt(totalStr, 10);
-
-  if (isNaN(total) || total < 1) {
-    alert("Invalid number of tickets. Redirecting to setup...");
+// ✅ NEW: Fetch real participants with lucky numbers
+async function fetchParticipants() {
+  try {
+    const response = await fetch('/api/raffle/participants', {
+      credentials: 'same-origin'
+    });
+    if (!response.ok) throw new Error('Failed to load participants');
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to load raffle participants. Please try again.');
     window.location.href = 'raffle-setup.html';
-    return false;
+    return [];
   }
+}
 
+// ✅ NEW: Initialize with real data
+async function initRaffle() {
+  const company = getUrlParameter('company');
   if (!company) {
-    alert("No company name provided. Redirecting to setup...");
+    alert("No sponsor company provided!");
     window.location.href = 'raffle-setup.html';
-    return false;
+    return;
   }
 
   sponsorName = decodeURIComponent(company);
   document.getElementById('modalSponsorName').textContent = sponsorName;
 
-  allNumbers = Array.from({ length: total }, (_, i) => i + 1);
+  // Fetch real participants
+  participants = await fetchParticipants();
+  
+  if (participants.length === 0) {
+    document.getElementById('winnerDisplay').textContent = '❌ No eligible participants';
+    document.getElementById('drawBtn').disabled = true;
+    return;
+  }
+
   drawnWinners = [];
   rotation = 0;
-
-  initCanvasSize(total);
+  initCanvasSize(participants.length);
   document.getElementById('winnerList').innerHTML = '';
   document.getElementById('winnerDisplay').textContent = '-';
   drawWheel();
-  return true;
 }
 
-// Draw the wheel
+// ✅ UPDATED: Draw real lucky numbers on wheel
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const total = allNumbers.length;
+  const total = participants.length;
 
   if (total === 0) {
     ctx.fillStyle = '#333';
@@ -120,7 +135,7 @@ function drawWheel() {
     ctx.fillStyle = '#FFD700';
     ctx.font = 'bold 24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('No Numbers', centerX, centerY);
+    ctx.fillText('No Participants', centerX, centerY);
     return;
   }
 
@@ -155,11 +170,13 @@ function drawWheel() {
       const textX = centerX + Math.cos(midAngle) * textRadius;
       const textY = centerY + Math.sin(midAngle) * textRadius;
 
+      // ✅ Display lucky number as #142
+      const luckyText = `#${participants[i].lucky_number}`;
       ctx.fillStyle = '#1a1a1a';
       ctx.font = `bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(allNumbers[i].toString(), textX, textY);
+      ctx.fillText(luckyText, textX, textY);
     }
   }
 
@@ -175,7 +192,38 @@ function drawWheel() {
   ctx.restore();
 }
 
-// Floating gold dot
+// ✅ NEW: Show winner details in modal
+function showWinnerModal(winner) {
+  // Update modal content
+  document.getElementById('winnerNumber').textContent = `#${winner.lucky_number}`;
+  document.getElementById('congratsText').textContent = 
+    `${winner.name} ${winner.surname}`;
+  document.getElementById('modalSponsorName').textContent = sponsorName;
+
+  // ✅ Add winner details below
+  const detailsDiv = document.getElementById('winnerDetails');
+  if (detailsDiv) detailsDiv.remove(); // Remove previous if exists
+
+  const details = document.createElement('div');
+  details.id = 'winnerDetails';
+  details.innerHTML = `
+    <div style="margin-top: 15px; color: white; font-size: 18px;">
+      <p><strong>Company:</strong> ${winner.company_name || 'N/A'}</p>
+      <p><strong>Table:</strong> ${winner.table_number || 'N/A'}</p>
+    </div>
+  `;
+  document.getElementById('modalContent').appendChild(details);
+
+  // Show modal
+  const modal = document.getElementById('winnerModal');
+  modal.classList.remove('show');
+  void modal.offsetWidth;
+  modal.classList.add('show');
+
+  startContinuousEffects();
+}
+
+// Floating effects (unchanged)
 function spawnFloatingDot() {
   const modal = document.getElementById('winnerModal');
   const dot = document.createElement('div');
@@ -191,7 +239,6 @@ function spawnFloatingDot() {
   modal.appendChild(dot);
 }
 
-// Celebration word
 function spawnCelebrationWord() {
   const modal = document.getElementById('winnerModal');
   const word = document.createElement('div');
@@ -206,7 +253,6 @@ function spawnCelebrationWord() {
   modal.appendChild(word);
 }
 
-// Start continuous effects
 function startContinuousEffects() {
   if (isSpawningEffects) return;
   isSpawningEffects = true;
@@ -216,40 +262,25 @@ function startContinuousEffects() {
   }, 400);
 }
 
-// Show winner modal
-function showWinnerModal(winner) {
-  document.getElementById('winnerNumber').textContent = winner;
-  document.getElementById('congratsText').textContent = "Congratulations!";
-  document.getElementById('modalSponsorName').textContent = sponsorName;
-
-  const modal = document.getElementById('winnerModal');
-  modal.classList.remove('show');
-  void modal.offsetWidth;
-  modal.classList.add('show');
-
-  startContinuousEffects();
-}
-
-// Close winner modal
 function closeWinnerModal() {
   document.getElementById('winnerModal').classList.remove('show');
 }
 
-// Draw winner with spin animation
+// ✅ UPDATED: Draw real winner
 function drawWinner() {
-  if (drawnWinners.length >= allNumbers.length) {
-    alert("All numbers have already won!");
+  if (drawnWinners.length >= participants.length) {
+    alert("All participants have won!");
     return;
   }
 
-  if (drawnWinners.length === 0 && !initRaffle()) return;
+  // Get available participants
+  const available = participants.filter(p => 
+    !drawnWinners.some(w => w.lucky_number === p.lucky_number)
+  );
 
-  document.getElementById('drawBtn').disabled = true;
-
-  const available = allNumbers.filter(num => !drawnWinners.includes(num));
   const winner = available[Math.floor(Math.random() * available.length)];
-  const winnerIndex = allNumbers.indexOf(winner);
-  const total = allNumbers.length;
+  const winnerIndex = participants.findIndex(p => p.lucky_number === winner.lucky_number);
+  const total = participants.length;
 
   const sliceAngleDeg = 360 / total;
   const middleOfWinnerSlice = winnerIndex * sliceAngleDeg + sliceAngleDeg / 2;
@@ -260,6 +291,8 @@ function drawWinner() {
   const totalDuration = 10000;
   const startTime = Date.now();
   const startRotation = rotation;
+
+  document.getElementById('drawBtn').disabled = true;
 
   const animate = () => {
     const elapsed = Date.now() - startTime;
@@ -274,12 +307,12 @@ function drawWinner() {
       drawWheel();
 
       drawnWinners.push(winner);
-      document.getElementById('winnerDisplay').textContent = `🏆 ${winner}`;
+      document.getElementById('winnerDisplay').textContent = `🏆 #${winner.lucky_number}`;
 
       const winnerList = document.getElementById('winnerList');
       const div = document.createElement('div');
       div.className = 'winner-item';
-      div.textContent = `#${drawnWinners.length}: ${winner}`;
+      div.textContent = `#${drawnWinners.length}: #${winner.lucky_number}`;
       winnerList.appendChild(div);
       winnerList.scrollTop = winnerList.scrollHeight;
 
@@ -291,21 +324,18 @@ function drawWinner() {
   animate();
 }
 
-// Reset raffle
 function resetRaffle() {
   initRaffle();
   document.getElementById('drawBtn').disabled = false;
 }
 
-// Handle window resize
 window.addEventListener('resize', function () {
-  if (allNumbers.length > 0) {
-    initCanvasSize(allNumbers.length);
+  if (participants.length > 0) {
+    initCanvasSize(participants.length);
     drawWheel();
   }
 });
 
-// On page load
 window.onload = function () {
   initRaffle();
   initSponsorLogos();

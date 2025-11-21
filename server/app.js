@@ -58,6 +58,7 @@ function requireAdminAuth(req, res, next) {
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/guests', require('./routes/guests'));
 app.use('/api/companies', require('./routes/companies'));
+app.use('/api/raffle', require('./routes/raffle'))
 
 // === PUBLIC ROUTES ===
 app.get('/', (req, res) => {

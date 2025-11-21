@@ -48,7 +48,6 @@ async function initializeDatabase() {
         company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
         position VARCHAR(255) NOT NULL,
         table_number VARCHAR(50),
-        registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         lucky_number INTEGER UNIQUE  -- CHANGED FROM VARCHAR TO INTEGER + UNIQUE
       )
     `);
@@ -67,16 +66,16 @@ async function initializeDatabase() {
     );
 
     // Add sample companies
-    await client.query(
-      `INSERT INTO companies (name, table_number, total_chairs) VALUES
-       ($1, $2, $3), ($4, $5, $6), ($7, $8, $9)
-       ON CONFLICT (name) DO NOTHING`,
-      [
-        'ABC Corporation', 'T1', 10,
-        'XYZ Ltd', 'T2', 8,
-        'Innovate Africa', 'T3', 12
-      ]
-    );
+    // await client.query(
+    //   `INSERT INTO companies (name, table_number, total_chairs) VALUES
+    //    ($1, $2, $3), ($4, $5, $6), ($7, $8, $9)
+    //    ON CONFLICT (name) DO NOTHING`,
+    //   [
+    //     'ABC Corporation', 'T1', 10,
+    //     'XYZ Ltd', 'T2', 8,
+    //     'Innovate Africa', 'T3', 12
+    //   ]
+    // );
 
     await client.query('COMMIT');
     console.log('Database tables created successfully');

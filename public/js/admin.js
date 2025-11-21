@@ -149,7 +149,8 @@ function applySearchFilter() {
             (guest.email || '').toLowerCase().includes(currentSearchTerm) ||
             (guest.phone || '').toLowerCase().includes(currentSearchTerm) ||
             (guest.company_name || '').toLowerCase().includes(currentSearchTerm) ||
-            (guest.position || '').toLowerCase().includes(currentSearchTerm)
+            (guest.position || '').toLowerCase().includes(currentSearchTerm) ||
+            (guest.lucky_number || '').toString().includes(currentSearchTerm)
         );
     }
 
@@ -165,8 +166,6 @@ function renderAllGuests(guests) {
         const row = document.createElement('div');
         row.className = 'all-guests-row';
 
-        const date = new Date(guest.registered_at).toLocaleString();
-
         row.innerHTML = `
             <div>${guest.name || ''}</div>
             <div>${guest.surname || ''}</div>
@@ -175,7 +174,7 @@ function renderAllGuests(guests) {
             <div>${guest.company_name || 'N/A'}</div>
             <div>${guest.position || 'N/A'}</div>
             <div>${guest.table_number || 'N/A'}</div>
-            <div>${date}</div>
+            <div><strong>#${guest.lucky_number || 'N/A'}</strong></div>
         `;
 
         container.appendChild(row);
@@ -247,15 +246,13 @@ function updateRecentGuests(guests) {
         const row = document.createElement('div');
         row.className = 'table-row';
 
-        const date = new Date(guest.registered_at).toLocaleTimeString();
-
         row.innerHTML = `
             <div>${guest.name || ''}</div>
             <div>${guest.surname || ''}</div>
             <div>${guest.email || ''}</div>
             <div>${guest.company_name || 'N/A'}</div>
             <div>${guest.table_number || 'N/A'}</div>
-            <div>${date}</div>
+            <div><strong>#${guest.lucky_number || 'N/A'}</strong></div>
         `;
 
         container.appendChild(row);
@@ -279,18 +276,19 @@ async function exportToExcel() {
 
     // Use filtered data if search is active
     let exportData = allGuestsData;
-    if (currentSearchTerm) { // ← CORRECTED: was "currentSearchTearm"
+    if (currentSearchTerm) {
       exportData = allGuestsData.filter(guest =>
         (guest.name || '').toLowerCase().includes(currentSearchTerm) ||
         (guest.surname || '').toLowerCase().includes(currentSearchTerm) ||
         (guest.email || '').toLowerCase().includes(currentSearchTerm) ||
         (guest.phone || '').toLowerCase().includes(currentSearchTerm) ||
         (guest.company_name || '').toLowerCase().includes(currentSearchTerm) ||
-        (guest.position || '').toLowerCase().includes(currentSearchTerm)
+        (guest.position || '').toLowerCase().includes(currentSearchTerm) ||
+        (guest.lucky_number || '').toString().includes(currentSearchTerm)
       );
     }
 
-    // Format data for Excel
+    // Format data for Excel - ADD LUCKY NUMBER COLUMN
     const worksheetData = exportData.map(guest => ({
       Name: guest.name || '',
       Surname: guest.surname || '',
@@ -299,11 +297,19 @@ async function exportToExcel() {
       Company: guest.company_name || 'N/A',
       Position: guest.position || 'N/A',
       Table: guest.table_number || 'N/A',
-      Registered: new Date(guest.registered_at).toLocaleString()
+      'Lucky #': guest.lucky_number || 'N/A', 
     }));
 
     // Create worksheet
-    const ws = XLSX.utils.json_to_sheet(worksheetData);
+    const ws = XLSX.utils.aoa_to_sheet([Object.keys(worksheetData[0] || {
+      Name: '', Surname: '', Email: '', Phone: '', Company: '', Position: '', Table: '', 'Lucky #': ''
+    })]);
+
+    // Add data rows
+    if (worksheetData.length > 0) {
+      const dataRows = worksheetData.map(item => Object.values(item));
+      XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A2' });
+    }
 
     // Make headers bold
     if (ws['!ref']) {
