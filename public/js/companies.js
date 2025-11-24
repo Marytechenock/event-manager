@@ -111,10 +111,10 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
         alert('Company name already exists.');
         return;
     }
-    if (isTableDuplicate) {
-        alert('Table number already exists.');
-        return;
-    }
+    // if (isTableDuplicate) {
+    //     alert('Table number already exists.');
+    //     return;
+    // }
 
     // Submit to backend with credentials
     fetch('/api/companies', {
