@@ -20,33 +20,88 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // set to true in production if using HTTPS
+      secure: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
 
-// 🔒 List of protected HTML files (relative to public/)
+// ✅ PAGE FLOW GUARD - Linear flow with refresh support
+function enforcePageFlow(req, res, next) {
+  const path = req.path;
+  const session = req.session;
+  const referer = req.get('Referer');
+
+  // Allow index always
+  if (path === '/' || path === '/index.html') {
+    // Optional: Clear registration state when returning to home
+    if (session) {
+      delete session.onRegistrationPage;
+      // Keep registrationCompleted if needed, or clear it:
+      // delete session.registrationCompleted;
+    }
+    return next();
+  }
+
+  // Registration page: must come from index
+  if (path === '/register.html') {
+    const allowedReferers = [
+      'http://localhost:3000/',
+      'http://localhost:3000/index.html'
+      // Add production domains when deployed:
+      // 'https://yourevent.com/',
+      // 'https://yourevent.com/index.html'
+    ];
+
+    if (!allowedReferers.some(ref => referer?.startsWith(ref))) {
+      return res.redirect('/'); // Block direct access
+    }
+
+    if (session) {
+      session.onRegistrationPage = true;
+    }
+    return next();
+  }
+
+  // Success page: must have completed registration
+  if (path === '/success.html') {
+    if (!session || !session.registrationCompleted) {
+      return res.redirect('/'); // Block invalid access
+    }
+    // ✅ DO NOT delete registrationCompleted → allows refresh!
+    return next();
+  }
+
+  // For all other pages (e.g., admin), optionally clean up
+  if (session) {
+    delete session.onRegistrationPage;
+    // Do NOT auto-delete registrationCompleted here
+  }
+
+  next();
+}
+
+// Apply page flow guard
+app.use(enforcePageFlow);
+
+// 🔒 Protected admin HTML files
 const PROTECTED_HTML_FILES = [
   '/admin-dashboard.html',
   '/manage-companies.html',
   '/raffle-setup.html',
   '/raffle-wheel.html'
-  // Add more if needed
 ];
 
-// Custom static middleware: skip protected files
+// Static file middleware
 const publicPath = path.join(__dirname, '../public');
 app.use((req, res, next) => {
-  // If the requested path is a protected HTML file, skip static serving
   if (PROTECTED_HTML_FILES.includes(req.path)) {
-    return next(); // let explicit routes handle it
+    return next(); // Let explicit routes handle admin pages
   }
-  // Otherwise, serve static files normally
   express.static(publicPath)(req, res, next);
 });
 
-// Auth middleware
+// Admin auth middleware
 function requireAdminAuth(req, res, next) {
   if (req.session && req.session.adminLoggedIn) {
     return next();
@@ -58,20 +113,28 @@ function requireAdminAuth(req, res, next) {
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/guests', require('./routes/guests'));
 app.use('/api/companies', require('./routes/companies'));
-app.use('/api/raffle', require('./routes/raffle'))
+app.use('/api/raffle', require('./routes/raffle'));
 
 // === PUBLIC ROUTES ===
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-
-app.get('/admin/', (req, res) => {
-  res.redirect('/admin-login.html');
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/register.html'));
 });
 
+app.get('/success.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/success.html'));
+});
+
+// Admin login (public)
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin-login.html'));
+});
+
+app.get('/admin/', (req, res) => {
+  res.redirect('/admin');
 });
 
 // === PROTECTED ADMIN PAGES ===

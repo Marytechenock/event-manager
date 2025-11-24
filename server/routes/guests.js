@@ -110,6 +110,9 @@ router.post('/register', async (req, res) => {
 
         await client.query('COMMIT');
 
+        // ✅ SET SESSION FLAG FOR SUCCESS PAGE ACCESS
+        req.session.registrationCompleted = true;
+
         // Prepare guest data for email (include lucky number)
         const guestData = {
             name,
@@ -119,7 +122,7 @@ router.post('/register', async (req, res) => {
             company_name: company.name,
             position,
             table_number: company.table_number,
-            lucky_number: guestResult.rows[0].lucky_number // Add to email
+            lucky_number: guestResult.rows[0].lucky_number
         };
 
         console.log('Guest data:', guestData);
@@ -136,14 +139,13 @@ router.post('/register', async (req, res) => {
             success: true,
             message: 'Registration successful',
             tableNumber: company.table_number,
-            luckyNumber: guestResult.rows[0].lucky_number, // Include in response
+            luckyNumber: guestResult.rows[0].lucky_number,
             guestId: guestResult.rows[0].id
         });
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Error in guest registration:', error);
         
-        // Handle unique constraint violation (race condition)
         if (error.code === '23505' && error.constraint?.includes('lucky_number')) {
             return res.status(500).json({ 
               error: 'Lucky number conflict. Please try again.' 
