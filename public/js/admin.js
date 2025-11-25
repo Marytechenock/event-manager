@@ -200,7 +200,7 @@ function updateCompaniesStatus(companies) {
             <div class="company-header">
                 <div class="company-info">
                     <div class="company-name">${company.name}</div>
-                    <div class="company-table">Table ${company.table_number}</div>
+                    <div class="company-table">${company.table_number}</div>
                 </div>
                 <div class="company-availability">
                     <span class="availability-badge ${available > 0 ? 'availability-available' : 'availability-full'}">
