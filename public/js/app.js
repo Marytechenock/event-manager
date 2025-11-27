@@ -121,9 +121,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle form submission
     if (registrationForm) {
         registrationForm.addEventListener('submit', function (e) {
+            // Prevent default form submission
+            e.preventDefault();
+
             // Ensure company is selected
             if (!hiddenInput.value) {
-                e.preventDefault();
                 alert('⚠️ Please select a company from the dropdown.');
                 // Open dropdown to help user
                 searchInput.removeAttribute('readonly');
@@ -145,7 +147,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Validate required fields
             if (!formData.name || !formData.surname || !formData.email || !formData.phone || !formData.company_id || !formData.position) {
-                e.preventDefault();
                 alert('⚠️ Please fill in all required fields.');
                 return;
             }
@@ -164,7 +165,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(formData)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Redirect with table & lucky number
@@ -176,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Submission error:', error);
-                alert('❌ An error occurred. Please try again.');
+                alert('Email already registered');
             })
             .finally(() => {
                 submitBtn.disabled = false;
