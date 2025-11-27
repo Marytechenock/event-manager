@@ -17,7 +17,8 @@
     </div>
 
     <div style="text-align: center;">
-      <button id="drawBtn" onclick="drawWinner()">Draw Winner</button>
+      <!-- ✅ CORRECTED BUTTON -->
+      <button id="drawBtn" onclick="drawAndSaveWinner()">Draw & Save Winner</button>
       <button id="resetBtn" onclick="resetRaffle()">Reset</button>
     </div>
 
@@ -36,6 +37,7 @@
       <div id="modalSponsorHeader">Sponsored by: <span id="modalSponsorName">Econet</span></div>
       <h1 id="winnerNumber">1</h1>
       <div id="congratsText">Richard Mutero</div>
+      <div id="winnerDetails"></div>
     </div>
 
     <div class="sponsor-logos">

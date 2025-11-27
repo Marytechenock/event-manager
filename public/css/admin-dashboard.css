@@ -365,6 +365,39 @@ body {
     background-color: #f9f9ff;
 }
 
+/* ===== RAFFLE WINNERS TABLE ===== */
+#winnersTableContainer {
+    margin-top: 30px;
+}
+
+.winners-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 1fr 2fr;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.winner-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 1fr 2fr;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+    font-size: 14px;
+}
+
+.winner-row:last-child {
+    border-bottom: none;
+}
+
+.winner-row:nth-child(even) {
+    background-color: #f9f9ff;
+}
+
 /* ===== VIEW ALL COMPANIES BUTTON ===== */
 .view-all-companies {
     text-align: center;
@@ -376,7 +409,7 @@ body {
     font-size: 12px;
     opacity: 0.9;
     margin-top: 4px;
-    color: #218838; /* neutral gray */
+    color: #218838;;
 }
 
 .view-all-companies a {
@@ -436,7 +469,9 @@ body {
     .table-header,
     .table-row,
     .all-guests-header,
-    .all-guests-row {
+    .all-guests-row,
+    .winners-header,
+    .winner-row {
         grid-template-columns: 1fr;
         gap: 8px;
     }

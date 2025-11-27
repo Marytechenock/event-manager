@@ -48,14 +48,34 @@ async function initializeDatabase() {
         company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
         position VARCHAR(255) NOT NULL,
         table_number VARCHAR(50),
-        lucky_number INTEGER UNIQUE  -- CHANGED FROM VARCHAR TO INTEGER + UNIQUE
+        lucky_number INTEGER UNIQUE
       )
     `);
 
-    // Create index for performance
+    // ✅ NEW: Raffle Winners Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS raffle_winners (
+        id SERIAL PRIMARY KEY,
+        guest_id INTEGER REFERENCES guests(id) ON DELETE CASCADE,
+        lucky_number INTEGER NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        surname VARCHAR(255) NOT NULL,
+        company_name VARCHAR(255),
+        table_number VARCHAR(50),
+        sponsor_company VARCHAR(255) NOT NULL,
+        drawn_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create indexes for performance
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_guests_lucky_number 
       ON guests(lucky_number)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_winners_drawn_at 
+      ON raffle_winners(drawn_at DESC)
     `);
 
     // Create default admin
@@ -64,18 +84,6 @@ async function initializeDatabase() {
       'INSERT INTO admins (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
       ['admin', defaultPassword]
     );
-
-    // Add sample companies
-    // await client.query(
-    //   `INSERT INTO companies (name, table_number, total_chairs) VALUES
-    //    ($1, $2, $3), ($4, $5, $6), ($7, $8, $9)
-    //    ON CONFLICT (name) DO NOTHING`,
-    //   [
-    //     'ABC Corporation', 'T1', 10,
-    //     'XYZ Ltd', 'T2', 8,
-    //     'Innovate Africa', 'T3', 12
-    //   ]
-    // );
 
     await client.query('COMMIT');
     console.log('Database tables created successfully');

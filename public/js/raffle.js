@@ -1,4 +1,4 @@
-// raffle.js - FINAL VERSION WITH GOLD NAME & FULL GLOWING COMPANY LINE
+// raffle.js - FINAL VERSION WITH DATABASE INTEGRATION
 
 let canvas = document.getElementById('wheel');
 let ctx = canvas.getContext('2d');
@@ -15,11 +15,11 @@ const colors = [
   '#FFC000', '#CFB53B', '#C5B358', '#B8860B', '#AA6C39'
 ];
 
-// Celebration words (emojis + text)
+// Celebration words
 const celebrationWords = [
   '🎉', '🏆', '✨', '🔥', '💫',
-  'Bravo!', 'Amazing!', 'Anthony Higgins!',
-  'Congratulations!', 'You Won!', 'Jackpot!'
+  'Bravo!', 'Amazing!', 'Congratulations!',
+  'You Won!', 'Jackpot!', 'Anthony Higgins!'
 ];
 
 // Sponsor logos
@@ -31,7 +31,7 @@ const sponsorLogos = [
 
 let isSpawningEffects = false;
 
-// Inject keyframe animations (no external CSS needed)
+// Inject keyframe animations
 (function injectAnimations() {
   const style = document.createElement('style');
   style.textContent = `
@@ -217,7 +217,7 @@ function drawWheel() {
   ctx.restore();
 }
 
-// ✅ Floating Effects
+// Floating effects
 function spawnFloatingDot() {
   const modal = document.getElementById('winnerModal');
   if (!modal || !modal.classList.contains('show')) return;
@@ -288,7 +288,7 @@ function startContinuousEffects() {
   }, 500);
 }
 
-// ✅ SHOW WINNER MODAL — WITH GOLD NAME & FULL GLOWING COMPANY LINE
+// SHOW WINNER MODAL — WITH GOLD NAME & FULL GLOWING COMPANY LINE
 function showWinnerModal(winner) {
   // Update number and name
   document.getElementById('winnerNumber').textContent = `${winner.lucky_number}`;
@@ -334,61 +334,104 @@ function closeWinnerModal() {
   document.querySelectorAll('.floating-dot, .celebration-word').forEach(el => el.remove());
 }
 
-// Draw winner with wheel spin
-function drawWinner() {
-  if (drawnWinners.length >= participants.length) {
-    alert("All participants have won!");
-    return;
-  }
+// ✅ DRAW WINNER AND SAVE TO DATABASE
+async function drawAndSaveWinner() {
+  // Get sponsor from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sponsorCompany = urlParams.get('company') || 'Anonymous Sponsor';
+  
+  // Disable button during draw
+  const btn = document.getElementById('drawBtn');
+  btn.disabled = true;
+  btn.textContent = 'Drawing...';
 
-  const available = participants.filter(p => 
-    !drawnWinners.some(w => w.lucky_number === p.lucky_number)
-  );
-
-  const winner = available[Math.floor(Math.random() * available.length)];
-  const winnerIndex = participants.findIndex(p => p.lucky_number === winner.lucky_number);
-  const total = participants.length;
-
-  const sliceAngleDeg = 360 / total;
-  const middleOfWinnerSlice = winnerIndex * sliceAngleDeg + sliceAngleDeg / 2;
-  const targetRotation = middleOfWinnerSlice;
-  const spinDegrees = 10 * 360;
-  const finalRotation = -targetRotation - spinDegrees;
-
-  const totalDuration = 10000;
-  const startTime = Date.now();
-  const startRotation = rotation;
-
-  document.getElementById('drawBtn').disabled = true;
-
-  const animate = () => {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / totalDuration, 1);
-    const easeOut = 1 - Math.pow(1 - progress, 3);
-    rotation = startRotation + (finalRotation - startRotation) * easeOut;
-    drawWheel();
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      rotation = -targetRotation;
-      drawWheel();
-
-      drawnWinners.push(winner);
-      document.getElementById('winnerDisplay').textContent = `🏆 ${winner.lucky_number}`;
-
-      const winnerList = document.getElementById('winnerList');
-      const div = document.createElement('div');
-      div.className = 'winner-item';
-      div.textContent = `#${drawnWinners.length}: ${winner.lucky_number}`;
-      winnerList.appendChild(div);
-      winnerList.scrollTop = winnerList.scrollHeight;
-
-      document.getElementById('drawBtn').disabled = false;
-      showWinnerModal(winner);
+  try {
+    // Validate participants
+    if (drawnWinners.length >= participants.length) {
+      alert("All participants have won!");
+      btn.disabled = false;
+      btn.textContent = 'Draw Winner';
+      return;
     }
-  };
 
-  animate();
+    // Get available participants (non-winners)
+    const available = participants.filter(p => 
+      !drawnWinners.some(w => w.lucky_number === p.lucky_number)
+    );
+
+    if (available.length === 0) {
+      alert("No eligible participants left!");
+      btn.disabled = false;
+      btn.textContent = 'Draw Winner';
+      return;
+    }
+
+    // Call new API endpoint to draw AND save winner
+    const response = await fetch('/api/raffle/draw-and-save', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sponsorCompany })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to draw winner');
+    }
+
+    const { winner } = await response.json();
+    
+    // Find winner index for wheel animation
+    const winnerIndex = participants.findIndex(p => p.lucky_number === winner.lucky_number);
+    const total = participants.length;
+
+    const sliceAngleDeg = 360 / total;
+    const middleOfWinnerSlice = winnerIndex * sliceAngleDeg + sliceAngleDeg / 2;
+    const targetRotation = middleOfWinnerSlice;
+    const spinDegrees = 10 * 360;
+    const finalRotation = -targetRotation - spinDegrees;
+
+    const totalDuration = 10000;
+    const startTime = Date.now();
+    const startRotation = rotation;
+
+    // Animate wheel
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / totalDuration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      rotation = startRotation + (finalRotation - startRotation) * easeOut;
+      drawWheel();
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        rotation = -targetRotation;
+        drawWheel();
+
+        // Update UI with saved winner
+        drawnWinners.push(winner);
+        document.getElementById('winnerDisplay').textContent = `🏆 ${winner.lucky_number}`;
+
+        const winnerList = document.getElementById('winnerList');
+        const div = document.createElement('div');
+        div.className = 'winner-item';
+        div.textContent = `#${drawnWinners.length}: ${winner.lucky_number}`;
+        winnerList.appendChild(div);
+        winnerList.scrollTop = winnerList.scrollHeight;
+
+        // Show modal
+        showWinnerModal(winner);
+      }
+    };
+
+    animate();
+  } catch (error) {
+    console.error('Draw and save error:', error);
+    alert('Failed to draw winner: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Draw Winner';
+  }
 }
 
 function resetRaffle() {
