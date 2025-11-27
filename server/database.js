@@ -9,6 +9,9 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Initialize database
@@ -30,7 +33,7 @@ async function initializeDatabase() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS companies (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255) UNIQUE NOT NULL,
+        name VARCHAR(255) NOT NULL,
         table_number VARCHAR(50) NOT NULL,
         total_chairs INTEGER NOT NULL CHECK (total_chairs > 0),
         chairs_occupied INTEGER DEFAULT 0 CHECK (chairs_occupied >= 0),
@@ -51,6 +54,10 @@ async function initializeDatabase() {
         lucky_number INTEGER UNIQUE
       )
     `);
+    await client.query(`
+        ALTER TABLE guests 
+        ADD COLUMN IF NOT EXISTS registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    `)
 
     // ✅ NEW: Raffle Winners Table
     await client.query(`

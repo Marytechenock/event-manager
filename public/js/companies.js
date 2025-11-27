@@ -99,18 +99,18 @@ document.getElementById('addCompanyForm')?.addEventListener('submit', function (
     const normalizedName = name.toLowerCase();
     const normalizedTable = tableNumber;
 
-    // Check duplicates using in-memory cache
-    const isNameDuplicate = allCompanies.some(company => 
-        company.name.toLowerCase() === normalizedName
-    );
-    const isTableDuplicate = allCompanies.some(company => 
-        company.table_number.toUpperCase() === normalizedTable
-    );
+    // // Check duplicates using in-memory cache
+    // const isNameDuplicate = allCompanies.some(company => 
+    //     company.name.toLowerCase() === normalizedName
+    // );
+    // const isTableDuplicate = allCompanies.some(company => 
+    //     company.table_number.toUpperCase() === normalizedTable
+    // );
 
-    if (isNameDuplicate) {
-        alert('Company name already exists.');
-        return;
-    }
+    // if (isNameDuplicate) {
+    //     alert('Company name already exists.');
+    //     return;
+    // }
     // if (isTableDuplicate) {
     //     alert('Table number already exists.');
     //     return;
@@ -200,21 +200,21 @@ function saveCompany(companyId, e) {
     }
 
     // Check duplicates (excluding current company)
-    const isNameDuplicate = allCompanies.some(company => 
-        company.id != companyId && company.name.toLowerCase() === name.toLowerCase()
-    );
-    const isTableDuplicate = allCompanies.some(company => 
-        company.id != companyId && company.table_number.toUpperCase() === tableNumber
-    );
+    // const isNameDuplicate = allCompanies.some(company => 
+    //     company.id != companyId && company.name.toLowerCase() === name.toLowerCase()
+    // );
+    // const isTableDuplicate = allCompanies.some(company => 
+    //     company.id != companyId && company.table_number.toUpperCase() === tableNumber
+    // );
 
-    if (isNameDuplicate) {
-        alert('Company name already exists.');
-        return;
-    }
-    if (isTableDuplicate) {
-        alert('Table number already exists.');
-        return;
-    }
+    // if (isNameDuplicate) {
+    //     alert('Company name already exists.');
+    //     return;
+    // }
+    // if (isTableDuplicate) {
+    //     alert('Table number already exists.');
+    //     return;
+    // }
 
     fetch(`/api/companies/${companyId}`, {
         method: 'PUT',
