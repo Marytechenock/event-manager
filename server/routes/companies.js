@@ -1,12 +1,35 @@
 const express = require('express');
 const db = require('../database');
 const router = express.Router();
+const cache = require('../utils/cache');
 
-// Get all companies
+// // Get all companies
+// router.get('/', async (req, res) => {
+//     try {
+//         const result = await db.query('SELECT * FROM companies ORDER BY name');
+//         res.json(result.rows);
+//     } catch (error) {
+//         console.error('Error fetching companies:', error);
+//         res.status(500).json({ error: 'Failed to fetch companies' });
+//     }
+// });
+
+// Get all companies (cached)
 router.get('/', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM companies ORDER BY name');
-        res.json(result.rows);
+        const cacheKey = 'companies:all';
+        let companies = cache.get(cacheKey);
+
+        if (!companies) {
+            console.log('Cache miss - fetching companies from database');
+            const result = await db.query('SELECT * FROM companies ORDER BY name');
+            companies = result.rows;
+            cache.set(cacheKey, companies);
+        } else {
+            console.log('Cache hit - serving companies from cache');
+        }
+
+        res.json(companies);
     } catch (error) {
         console.error('Error fetching companies:', error);
         res.status(500).json({ error: 'Failed to fetch companies' });
@@ -31,14 +54,14 @@ router.post('/', async (req, res) => {
             'INSERT INTO companies (name, table_number, total_chairs) VALUES ($1, $2, $3) RETURNING id',
             [cleanName, cleanTable, chairs]
         );
-        
-        res.status(201).json({ 
-            message: 'Company added successfully', 
-            id: result.rows[0].id 
+
+        res.status(201).json({
+            message: 'Company added successfully',
+            id: result.rows[0].id
         });
     } catch (error) {
         console.error('Error adding company:', error);
-        
+
         // Handle unique constraint violations
         if (error.code === '23505') {
             const detail = error.detail || '';
@@ -49,9 +72,10 @@ router.post('/', async (req, res) => {
                 return res.status(409).json({ error: 'Table number already exists' });
             }
         }
-        
+
         res.status(500).json({ error: 'Failed to add company' });
     }
+    cache.delete('companies:all'); // Invalidate cache
 });
 
 // Update company
@@ -81,7 +105,7 @@ router.put('/:id', async (req, res) => {
         res.json({ message: 'Company updated successfully' });
     } catch (error) {
         console.error('Error updating company:', error);
-        
+
         // Handle unique constraint violations
         // if (error.code === '23505') {
         //     const detail = error.detail || '';
@@ -92,9 +116,10 @@ router.put('/:id', async (req, res) => {
         //         return res.status(409).json({ error: 'Table number already exists' });
         //     }
         // }
-        
+
         res.status(500).json({ error: 'Failed to update company' });
     }
+    cache.delete('companies:all'); // Invalidate cache
 });
 
 // Delete company
@@ -135,6 +160,32 @@ router.delete('/:id', async (req, res) => {
     } finally {
         client.release();
     }
+    cache.delete('companies:all'); // Invalidate cache
+});
+
+// Get single company (cached)
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cacheKey = `company:${id}`;
+
+        let company = cache.get(cacheKey);
+
+        if (!company) {
+            const result = await db.query('SELECT * FROM companies WHERE id = $1', [id]);
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'Company not found' });
+            }
+            company = result.rows[0];
+            cache.set(cacheKey, company);
+        }
+
+        res.json(company);
+    } catch (error) {
+        console.error('Error fetching company:', error);
+        res.status(500).json({ error: 'Failed to fetch company' });
+    }
+    cache.delete(cacheKey); // Invalidate cache
 });
 
 module.exports = router;

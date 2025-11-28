@@ -55,7 +55,7 @@ async function initializeDatabase() {
       )
     `);
     await client.query(`
-        ALTER TABLE guests 
+        ALTER TABLE guests
         ADD COLUMN IF NOT EXISTS registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     `)
 
@@ -76,13 +76,26 @@ async function initializeDatabase() {
 
     // Create indexes for performance
     await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_guests_lucky_number 
+      CREATE INDEX IF NOT EXISTS idx_guests_lucky_number
       ON guests(lucky_number)
     `);
 
     await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_winners_drawn_at 
+      CREATE INDEX IF NOT EXISTS idx_winners_drawn_at
       ON raffle_winners(drawn_at DESC)
+    `);
+
+    // Add index for company_id
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_guests_company_id
+      ON guests(company_id)
+      WHERE company_id IS NOT NULL
+    `);
+
+    // Add index for email (already has a UNIQUE constraint which creates an index)
+    // This is just for documentation since UNIQUE already creates an index
+    await client.query(`
+      COMMENT ON TABLE guests IS 'Table storing guest information with indexes on email and company_id for faster lookups';
     `);
 
     // Create default admin

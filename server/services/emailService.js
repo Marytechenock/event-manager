@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const cache = require('../utils/cache');
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -21,7 +22,7 @@ const getEmailTemplate = (guest) => {
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                 .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
                 .content { padding: 20px; }
-                .lucky-number { 
+                .lucky-number {
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
                     padding: 15px;
@@ -43,11 +44,11 @@ const getEmailTemplate = (guest) => {
                 <div class="content">
                     <p>Hello ${guest.name} ${guest.surname},</p>
                     <p>Thank you for registering for the MAZ Superbrand Awards 2025!</p>
-                    
+
                     <div class="lucky-number">
                         Your Lucky Number: ${guest.lucky_number || 'N/A'}
                     </div>
-                    
+
                     <p>Here are your registration details:</p>
                     <ul>
                         <li><strong>Name:</strong> ${guest.name} ${guest.surname}</li>
@@ -71,6 +72,17 @@ const getEmailTemplate = (guest) => {
 };
 
 const sendRegistrationEmail = async (guest) => {
+
+    const { email } = guest;
+    const cacheKey = `email:${email}`;
+
+    // Check if we've sent an email to this address recently (rate limiting)
+    if (cache.get(cacheKey)) {
+        console.log(`Email already sent to ${email} recently, skipping`);
+        return;
+    }
+
+
     try {
         const mailOptions = {
             from: `"MAZ Superbrand Awards" <${process.env.SMTP_FROM_EMAIL || 'no-reply@marytechenock.com'}>`,
@@ -80,12 +92,13 @@ const sendRegistrationEmail = async (guest) => {
             bcc: process.env.ADMIN_EMAIL || 'info@marytechenock.com'
         };
 
+        cache.set(cacheKey, true, 60 * 60 * 1000); // Cache for an hour
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: %s', info.messageId);
+        console.log('Email sent successfully to:', email);
         return true;
     } catch (error) {
         console.error('Error sending email:', error);
-        throw new Error('Failed to send confirmation email');
+        console.error('⚠ Failed to send confirmation email');
     }
 };
 
