@@ -1,114 +1,128 @@
+/* ===== Base & Reset ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling */
+}
+
 body {
-    background-color:#333333; /* Light grey */
+    background-color: #333333;
     font-family: 'Montserrat', sans-serif;
     color: #333;
-    min-height: auto;
+    min-height: 100vh;
+    max-height: 100vh; /* Limit to viewport height */
     display: flex;
     flex-direction: column;
 }
 
-/* Top logo section */
+/* ===== Top Logo Section ===== */
 .top-logo-section {
     text-align: center;
-    padding: 20px 0 10px;
-}
-.mary{
-    text-align: center;
-    padding: 20px 0 10px;
-    color: white;
+    padding: clamp(8px, 1.5vh, 15px) 0 clamp(4px, 0.8vh, 8px); /* Reduced padding */
+    flex-shrink: 0;
 }
 
 .top-logo-section img {
-    max-width: 200px;
+    max-width: min(180px, 40vw); /* Responsive logo */
+    height: auto;
+    max-height: clamp(40px, 6vh, 60px);
+}
+
+.mary {
+    text-align: center;
+    padding: clamp(4px, 0.8vh, 8px) 0; /* Reduced padding */
+    color: white;
+    font-size: clamp(14px, 2.5vw, 16px);
+}
+
+.top-logo-section .maryt img {
+    max-width: min(80px, 25vw); /* Responsive smaller logo */
     height: auto;
 }
 
-.top-logo-section .maryt img{
-    max-width: 100px;
-    height: auto;
-}
-
-/* Main form container */
+/* ===== Main Container ===== */
 .container {
-    background-color:#333333;
+    background-color: #333333;
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0 20px 40px;
+    padding: clamp(4px, 0.8vh, 8px) clamp(12px, 3vw, 20px) clamp(8px, 1.5vh, 15px); /* Reduced padding */
+    min-height: 0;
+    overflow: hidden;
 }
 
 .hero-section {
     width: 100%;
-    max-width: 600px;
+    max-width: min(600px, 90vw);
+    max-height: 100%;
 }
 
-/*.luxury-form {
-    background-color: white; /* White 
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
-    padding: 40px 30px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-*/
+/* ===== Form Styling ===== */
 .luxury-form {
-    background: 
-    url('../assets/images/superbrand.png') no-repeat center center;
-    background-size: 180px auto; /* ← Adjust width (180px) as needed */
+    background: url('../assets/images/superbrand.png') no-repeat center center;
+    background-size: min(150px, 30vw) auto; /* Responsive background size */
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    padding: 40px 30px;
-}
-.luxury-form h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 1.8em;
-    color: #222;
+    padding: clamp(20px, 3vh, 30px) clamp(15px, 3vw, 25px); /* Responsive padding */
+    max-height: 100%;
+    overflow: hidden;
 }
 
-/* Form styling */
+.luxury-form h2 {
+    text-align: center;
+    margin-bottom: clamp(15px, 2.5vh, 25px);
+    font-size: clamp(1.3em, 4vw, 1.8em);
+    color: white;
+}
+
+/* ===== Form Elements ===== */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: clamp(12px, 2vh, 18px); /* Responsive margin */
 }
 
 .form-label {
     text-align: center;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: clamp(6px, 1vh, 10px);
     font-weight: 600;
-    color: white; /* Dark labels for readability on white */
+    color: white;
+    font-size: clamp(14px, 2.5vw, 16px);
 }
 
-.select-co{
+.select-co {
     text-align: center;
-    color:#333;
+    color: #333;
     width: 100%;
-    padding: 14px;
+    padding: clamp(10px, 2vh, 14px);
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 16px;
-    background-color: white; /* White input background */
+    font-size: clamp(14px, 2.5vw, 16px);
+    background-color: white;
     color: #333;
+    max-width: min(400px, 80vw);
+    margin: 0 auto;
+    display: block;
 }
 
 .form-control {
-    width: 65%;
-    padding: 14px;
+    width: min(65%, 300px);
+    padding: clamp(10px, 2vh, 14px);
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: clamp(14px, 2.5vw, 16px);
     background-color: white;
     color: #333;
-    display: block;       /* ← Required for margin: 0 auto to work */
-    margin: 0 auto;       /* ← Now this centers the input */
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
 }
 
 .form-control:focus {
@@ -117,23 +131,24 @@ body {
     box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
 
-/* Buttons */
+/* ===== Buttons ===== */
 .btn-luxury {
     background-color: #d4af37;
     color: white;
     border: none;
-    padding: 14px 32px;
-    font-size: 16px;
+    padding: clamp(10px, 2vh, 14px) clamp(20px, 4vw, 32px);
+    font-size: clamp(14px, 2.5vw, 16px);
     font-weight: 700;
     border-radius: 8px;
     cursor: pointer;
-    display: block;         /* ← Make it a block element */
-    width: fit-content;     /* ← Let it size to content (better than 'auto') */
-    margin: 0 auto;         /* ← Now this works! */
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease;
+    min-width: min(140px, 40vw);
 }
    
 .btn-luxury:hover {
@@ -142,7 +157,7 @@ body {
 
 .back-link {
     text-align: center;
-    margin-top: 25px;
+    margin-top: clamp(15px, 2.5vh, 20px);
 }
 
 .btn-outline-gold {
@@ -150,9 +165,10 @@ body {
     color: #d4af37;
     text-decoration: none;
     font-weight: 600;
-    padding: 10px 20px;
+    padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 20px);
     border: 1px solid #d4af37;
     border-radius: 6px;
+    font-size: clamp(12px, 2.2vw, 14px);
 }
 
 .btn-outline-gold:hover {
@@ -160,68 +176,170 @@ body {
     color: white;
 }
 
-/* Bottom attribution + logo */
+/* ===== Bottom Attribution ===== */
 .bottom-attribution {
     text-align: center;
-    padding: 20px;
+    padding: clamp(10px, 1.5vh, 15px);
     color: white;
     background-color: #333;
     margin-top: auto;
+    flex-shrink: 0;
 }
 
 .bottom-attribution p {
-    font-size: 16px;
-    margin-bottom: 15px;
-    line-height: 1.5;
+    font-size: clamp(12px, 2.2vw, 14px);
+    margin-bottom: clamp(8px, 1.2vh, 12px);
+    line-height: 1.4;
 }
 
 .bottom-logo img {
-    max-width: 100px;
+    max-width: min(80px, 20vw);
     height: auto;
-    margin-top:10px;
+    max-height: clamp(30px, 4vh, 40px);
+    margin-top: clamp(4px, 0.8vh, 8px);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .luxury-form {
-        padding: 30px 20px;
-    }
+/* ===== Enhanced Responsive Breakpoints ===== */
 
-    .luxury-form h2 {
-        font-size: 1.5em;
-    }
-
-    .top-logo-section img,
-    .bottom-logo img {
-        max-width: 160px;
-    }
-
-    .bottom-attribution p {
-        font-size: 14px;
-        padding: 0 10px;
-    }
-}
-
-@media (max-width: 480px) {
+/* Mobile Landscape */
+@media (max-height: 500px) and (orientation: landscape) {
     .top-logo-section {
-        padding: 15px 0 5px;
+        padding: 4px 0 2px;
     }
-
-    .top-logo-section img,
-    .bottom-logo img {
-        max-width: 140px;
+    
+    .top-logo-section img {
+        max-height: 35px;
     }
-
+    
     .luxury-form {
-        padding: 25px 15px;
+        padding: 12px 10px;
+        background-size: 80px auto;
     }
-
-    .form-control {
-        padding: 12px;
-        font-size: 16px; /* Prevents zoom on iOS */
+    
+    .luxury-form h2 {
+        margin-bottom: 10px;
+        font-size: 1.1em;
     }
-
+    
+    .form-group {
+        margin-bottom: 8px;
+    }
+    
+    .form-control, .select-co {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    
+    .btn-luxury {
+        padding: 6px 16px;
+        font-size: 13px;
+        min-width: 120px;
+    }
+    
     .bottom-attribution {
-        padding: 15px 10px;
+        padding: 6px;
     }
+    
+    .bottom-attribution p {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+    
+    .bottom-logo img {
+        max-height: 25px;
+    }
+}
+
+/* Very small screens */
+@media (max-height: 400px) {
+    .container {
+        padding: 2px 10px 4px;
+    }
+    
+    .luxury-form {
+        padding: 8px;
+        background-size: 60px auto;
+    }
+    
+    .luxury-form h2 {
+        margin-bottom: 6px;
+        font-size: 1em;
+    }
+    
+    .form-group {
+        margin-bottom: 4px;
+    }
+    
+    .form-control, .select-co {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-luxury {
+        padding: 4px 12px;
+        font-size: 12px;
+        min-width: 100px;
+    }
+    
+    .back-link {
+        margin-top: 8px;
+    }
+}
+
+/* Tablets and larger phones */
+@media (min-height: 700px) and (max-width: 768px) {
+    .luxury-form {
+        padding: 25px 20px;
+        background-size: 120px auto;
+    }
+    
+    .luxury-form h2 {
+        font-size: 1.6em;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) and (min-height: 800px) {
+    .luxury-form {
+        padding: 35px 30px;
+        background-size: 180px auto;
+    }
+    
+    .luxury-form h2 {
+        font-size: 2em;
+    }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1600px) {
+    .hero-section {
+        max-width: 700px;
+    }
+}
+
+/* Form-specific height adjustments */
+@media (max-height: 600px) {
+    .luxury-form {
+        background-size: 80px auto; /* Smaller background on short screens */
+    }
+    
+    .form-control {
+        width: min(75%, 350px); /* Wider inputs on short screens */
+    }
+}
+
+/* Ensure no scrolling on form content */
+.luxury-form {
+    overflow-y: auto; /* Allow scrolling within form if absolutely necessary */
+    max-height: 65vh; /* But limit height */
+}
+
+/* Hide scrollbar for form */
+.luxury-form::-webkit-scrollbar {
+    display: none;
+}
+
+.luxury-form {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
