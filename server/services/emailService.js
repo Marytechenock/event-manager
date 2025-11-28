@@ -10,9 +10,7 @@ const transporter = nodemailer.createTransport({
         user: process.env.SMTP_USERNAME,
         pass: process.env.SMTP_PASSWORD
     },
-    tls: {
-        rejectUnauthorized: false
-    }
+    requireTLS: true
 });
 
 const getEmailTemplate = (guest) => {
@@ -100,15 +98,15 @@ const getEmailTemplate = (guest) => {
         };
 
         cache.set(cacheKey, true, 60 * 60 * 1000); // Cache for an hour
-        const info = await transporter.sendMail(mailOptions);
+        // const info = await transporter.sendMail(mailOptions);
 
         // Use promise with timeout
-        // const emailPromise = transporter.sendMail(mailOptions);
-        // const timeoutPromise = new Promise((_, reject) =>
-        //     setTimeout(() => reject(new Error('Email timeout')), 10000)
-        // );
+        const emailPromise = transporter.sendMail(mailOptions);
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Email timeout')), 10000)
+        );
 
-        // await Promise.race([emailPromise, timeoutPromise]);
+        await Promise.race([emailPromise, timeoutPromise]);
 
         console.timeEnd('Email sending');
         console.timeEnd(`Email processing for ${email}`);
