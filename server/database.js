@@ -9,6 +9,10 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  maxUses: 7500,
   ssl: {
     rejectUnauthorized: false
   }
@@ -116,6 +120,22 @@ async function initializeDatabase() {
   }
 }
 
+// In database.js
+// module.exports = {
+//   async query(text, params) {
+//     const start = Date.now();
+//     try {
+//       const res = await pool.query(text, params);
+//       const duration = Date.now() - start;
+//       console.log('Executed query', { text, duration, rows: res.rowCount });
+//       return res;
+//     } catch (error) {
+//       console.error('Error in query', { text, error });
+//       throw error;
+//     }
+//   }
+// };
+
 // Test database connection
 async function testConnection() {
   try {
@@ -134,5 +154,17 @@ module.exports = {
   query: (text, params) => pool.query(text, params),
   getClient: () => pool.connect(),
   testConnection,
-  initializeDatabase
+  initializeDatabase,
+   async query(text, params) {
+    const start = Date.now();
+    try {
+      const res = await pool.query(text, params);
+      const duration = Date.now() - start;
+      console.log('Executed query', { text, duration, rows: res.rowCount });
+      return res;
+    } catch (error) {
+      console.error('Error in query', { text, error });
+      throw error;
+    }
+  }
 };

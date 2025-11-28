@@ -71,7 +71,9 @@ const getEmailTemplate = (guest) => {
     `;
 };
 
-const sendRegistrationEmail = async (guest) => {
+// const sendRegistrationEmail = async (guest) => {
+
+    async function sendRegistrationEmail(guest) {
 
     const { email } = guest;
     const cacheKey = `email:${email}`;
@@ -93,12 +95,23 @@ const sendRegistrationEmail = async (guest) => {
         };
 
         cache.set(cacheKey, true, 60 * 60 * 1000); // Cache for an hour
-        const info = await transporter.sendMail(mailOptions);
+        // const info = await transporter.sendMail(mailOptions);
+
+        // Use promise with timeout
+        const emailPromise = transporter.sendMail(mailOptions);
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Email timeout')), 10000)
+        );
+
+        await Promise.race([emailPromise, timeoutPromise]);
+
         console.log('Email sent successfully to:', email);
         return true;
     } catch (error) {
         console.error('Error sending email:', error);
-        console.error('⚠ Failed to send confirmation email');
+        // Remove from cache on failure to allow retry
+        cache.delete(cacheKey);
+        return false;
     }
 };
 

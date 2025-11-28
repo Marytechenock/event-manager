@@ -234,6 +234,7 @@ if (registrationForm) {
             submitBtn.textContent = 'Registering...';
 
             // Submit data
+            //async
             const response = await fetch('/api/guests/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
