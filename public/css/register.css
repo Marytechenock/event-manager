@@ -50,7 +50,7 @@ body {
 }
 
 /*.luxury-form {
-    background-color: white; /* White 
+    background-color: white; /* White
     backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 40px 30px;
@@ -58,7 +58,7 @@ body {
 }
 */
 .luxury-form {
-    background: 
+    background:
     url('../assets/images/superbrand.png') no-repeat center center;
     background-size: 180px auto; /* ← Adjust width (180px) as needed */
     backdrop-filter: blur(20px);
@@ -135,7 +135,7 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease;
 }
-   
+
 .btn-luxury:hover {
     background-color: #b8962a;
 }

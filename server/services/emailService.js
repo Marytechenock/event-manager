@@ -4,7 +4,7 @@ const cache = require('../utils/cache');
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    port: process.env.SMTP_PORT ,
     secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
     auth: {
         user: process.env.SMTP_USERNAME,
@@ -102,7 +102,7 @@ const getEmailTemplate = (guest) => {
         // Use promise with timeout
         const emailPromise = transporter.sendMail(mailOptions);
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Email timeout')), 10000)
+            setTimeout(() => reject(new Error('Email timeout')), 10 * 60 * 1000)
         );
 
         await Promise.race([emailPromise, timeoutPromise]);
