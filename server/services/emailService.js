@@ -5,10 +5,13 @@ const cache = require('../utils/cache');
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT || 587,
-    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+    secure: process.env.SMTP_SECURE === 'false', // true for 465, false for other ports
     auth: {
         user: process.env.SMTP_USERNAME,
         pass: process.env.SMTP_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
@@ -106,7 +109,7 @@ const getEmailTemplate = (guest) => {
         // );
 
         // await Promise.race([emailPromise, timeoutPromise]);
-        
+
         console.timeEnd('Email sending');
         console.timeEnd(`Email processing for ${email}`);
         console.log('Email sent successfully to:', email);
