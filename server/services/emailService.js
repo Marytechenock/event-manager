@@ -53,7 +53,7 @@ const getEmailTemplate = (guest) => {
                         <li><strong>Name:</strong> ${guest.name} ${guest.surname}</li>
                         <li><strong>Email:</strong> ${guest.email}</li>
                         <li><strong>Phone:</strong> ${guest.phone}</li>
-                        <li><strong>Company:</strong> ${guest.company_name || 'N/A'}</li>
+                        <li><strong>Organisation:</strong> ${guest.company_name || 'N/A'}</li>
                         <li><strong>Position:</strong> ${guest.position || 'N/A'}</li>
                         <li><strong>Table Number:</strong> ${guest.table_number || 'Will be assigned'}</li>
                     </ul>

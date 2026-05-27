@@ -36,31 +36,17 @@
                         <label for="phone" class="form-label">Phone Number *</label>
                         <input type="tel" id="phone" name="phone" class="form-control" required>
                     </div>
-                    
-                    <!-- ✅ Updated Company Search + Dropdown -->
+
                     <div class="form-group">
-                        <label for="company-search" class="form-label">Company *</label>
-                        <div class="searchable-select">
-                            <!-- Wrapper keeps your layout intact -->
-                            <div class="dropdown-container" style="position: relative; width: 100%;">
-                                <input 
-                                    type="text" 
-                                    id="company-search" 
-                                    class="form-control" 
-                                    placeholder="Select or search company..." 
-                                    autocomplete="off"
-                                    readonly
-                                    required
-                                >
-                                <input 
-                                    type="hidden" 
-                                    id="company-id" 
-                                    name="company_id" 
-                                    required
-                                >
-                                <ul id="company-dropdown" class="dropdown-list" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; z-index: 1000; max-height: 200px; overflow-y: auto; list-style: none; margin: 0; padding: 0; display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></ul>
-                            </div>
-                        </div>
+                        <label for="organisation-name" class="form-label">Organisation Name *</label>
+                        <input
+                            type="text"
+                            id="organisation-name"
+                            name="organisation_name"
+                            class="form-control"
+                            placeholder="Enter organisation name"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">

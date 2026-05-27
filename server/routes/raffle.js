@@ -1,6 +1,9 @@
 const express = require('express');
 const db = require('../database');
 const router = express.Router();
+const guestOrganisationSelect = `
+    COALESCE(NULLIF(TRIM(g.organisation_name), ''), c.name) AS company_name
+`;
 
 // 🔐 Admin authentication middleware
 function requireAdminAuth(req, res, next) {
@@ -20,7 +23,7 @@ router.get('/participants', requireAdminAuth, async (req, res) => {
                 g.surname,
                 g.email,
                 g.table_number,
-                c.name AS company_name
+                ${guestOrganisationSelect}
             FROM guests g
             LEFT JOIN companies c ON g.company_id = c.id
             WHERE g.lucky_number IS NOT NULL
@@ -53,7 +56,7 @@ router.post('/draw-and-save', requireAdminAuth, async (req, res) => {
                 g.name,
                 g.surname,
                 g.table_number,
-                c.name AS company_name
+                ${guestOrganisationSelect}
             FROM guests g
             LEFT JOIN companies c ON g.company_id = c.id
             WHERE g.lucky_number IS NOT NULL

@@ -5,7 +5,7 @@ const cors = require('cors');
 const session = require('express-session');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 
 // Middleware
 app.use(cors());
@@ -47,7 +47,11 @@ function enforcePageFlow(req, res, next) {
   if (path === '/register.html') {
     const allowedReferers = [
       'http://localhost:3000/',
-      'http://localhost:3000/index.html'
+      'http://localhost:3000/index.html',
+      'http://localhost:3001/',
+      'http://localhost:3001/index.html',
+      'http://localhost:3030/',
+      'http://localhost:3030/index.html'
       // Add production domains when deployed:
       // 'https://yourevent.com/',
       // 'https://yourevent.com/index.html'

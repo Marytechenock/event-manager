@@ -8,10 +8,10 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  port: process.env.DB_PORT
+  // ssl: {
+  //   rejectUnauthorized: false
+  // }
 });
 
 // Initialize database
@@ -49,13 +49,18 @@ async function initializeDatabase() {
         email VARCHAR(255) UNIQUE NOT NULL,
         phone VARCHAR(50) NOT NULL,
         company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
+        organisation_name VARCHAR(255),
         position VARCHAR(255) NOT NULL,
         table_number VARCHAR(50),
         lucky_number INTEGER UNIQUE
       )
     `);
     await client.query(`
-        ALTER TABLE guests 
+        ALTER TABLE guests
+        ADD COLUMN IF NOT EXISTS organisation_name VARCHAR(255)
+    `);
+    await client.query(`
+        ALTER TABLE guests
         ADD COLUMN IF NOT EXISTS registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     `)
 
@@ -76,12 +81,12 @@ async function initializeDatabase() {
 
     // Create indexes for performance
     await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_guests_lucky_number 
+      CREATE INDEX IF NOT EXISTS idx_guests_lucky_number
       ON guests(lucky_number)
     `);
 
     await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_winners_drawn_at 
+      CREATE INDEX IF NOT EXISTS idx_winners_drawn_at
       ON raffle_winners(drawn_at DESC)
     `);
 

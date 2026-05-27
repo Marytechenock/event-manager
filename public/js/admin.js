@@ -69,20 +69,23 @@ function loadDashboardData() {
         .then(response => response.json())
         .then(data => {
             const totalAttendees = data.totalAttendees;
-            const totalCompanies = data.companies.length;
-            const attendingCompanies = data.companies.filter(company => 
-                (company.chairs_occupied || 0) > 0
+            const attendingCompanies = new Set(
+                data.guests
+                    .map(guest => (guest.company_name || '').trim())
+                    .filter(Boolean)
+            ).size;
+            const guestsWithOrganisation = data.guests.filter(guest =>
+                Boolean((guest.company_name || '').trim())
             ).length;
 
             let totalChairs = 0;
-            let occupiedChairs = 0;
-            let availableChairs = 0;
 
             data.companies.forEach(company => {
                 totalChairs += company.total_chairs;
-                occupiedChairs += company.chairs_occupied;
-                availableChairs += (company.total_chairs - company.chairs_occupied);
             });
+
+            const occupiedChairs = totalAttendees;
+            const availableChairs = Math.max(totalChairs - totalAttendees, 0);
 
             document.getElementById('totalAttendees').textContent = totalAttendees;
             document.getElementById('companyAttendanceCount').textContent = attendingCompanies;
@@ -96,9 +99,9 @@ function loadDashboardData() {
                 document.getElementById('attendanceUtil').textContent = '0%';
             }
 
-            if (totalCompanies > 0) {
-                const companyAttendancePercent = Math.round((attendingCompanies / totalCompanies) * 100);
-                document.getElementById('companyAttendanceUtil').textContent = `${companyAttendancePercent}%`;
+            if (totalAttendees > 0) {
+                const organisationCoveragePercent = Math.round((guestsWithOrganisation / totalAttendees) * 100);
+                document.getElementById('companyAttendanceUtil').textContent = `${organisationCoveragePercent}% covered`;
             } else {
                 document.getElementById('companyAttendanceUtil').textContent = '0%';
             }
@@ -293,14 +296,14 @@ async function exportToExcel() {
       Surname: guest.surname || '',
       Email: guest.email || '',
       Phone: guest.phone || '',
-      Company: guest.company_name || 'N/A',
+      Organisation: guest.company_name || 'N/A',
       Position: guest.position || 'N/A',
       Table: guest.table_number || 'N/A',
       'Lucky Number': guest.lucky_number || 'N/A', 
     }));
 
     const ws = XLSX.utils.aoa_to_sheet([Object.keys(worksheetData[0] || {
-      Name: '', Surname: '', Email: '', Phone: '', Company: '', Position: '', Table: '', 'Lucky Number': ''
+      Name: '', Surname: '', Email: '', Phone: '', Organisation: '', Position: '', Table: '', 'Lucky Number': ''
     })]);
 
     if (worksheetData.length > 0) {
@@ -360,7 +363,7 @@ async function exportWinnersPdf() {
         doc.setFontSize(12);
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
 
-        const headers = ['Lucky Number', 'Name', 'Company', 'Table', 'Sponsor'];
+        const headers = ['Lucky Number', 'Name', 'Organisation', 'Table', 'Sponsor'];
         const rows = winners.map(w => [
             `${w.lucky_number}`,
             `${w.name} ${w.surname}`,

@@ -2,6 +2,9 @@ const express = require('express');
 const db = require('../database');
 const router = express.Router();
 const { sendRegistrationEmail } = require('../services/emailService');
+const guestOrganisationSelect = `
+    COALESCE(NULLIF(TRIM(g.organisation_name), ''), c.name) AS company_name
+`;
 
 // Get total chairs across all companies
 async function getTotalChairs(client) {
@@ -45,37 +48,64 @@ async function generateLuckyNumber(client) {
 
 // Register new guest
 router.post('/register', async (req, res) => {
-    const { name, surname, email, phone, company_id, position } = req.body;
+    const { name, surname, email, phone, company_id, organisation_name, position } = req.body;
     const client = await db.getClient();
 
     try {
         await client.query('BEGIN');
 
-        // First check if company has available chairs
-        const companyQuery = `
-            SELECT *, (total_chairs - chairs_occupied) as available_chairs, table_number
-            FROM companies
-            WHERE id = $1
-            FOR UPDATE
-        `;
-        const companyResult = await client.query(companyQuery, [company_id]);
+        const cleanName = name?.trim();
+        const cleanSurname = surname?.trim();
+        const cleanEmail = email?.trim();
+        const cleanPhone = phone?.trim();
+        const cleanOrganisationName = organisation_name?.trim();
+        const cleanPosition = position?.trim();
 
-        if (companyResult.rows.length === 0) {
+        if (!cleanName || !cleanSurname || !cleanEmail || !cleanPhone || !cleanPosition) {
             await client.query('ROLLBACK');
-            return res.status(400).json({ error: 'Company not found' });
+            return res.status(400).json({ error: 'All required fields must be provided' });
         }
 
-        const company = companyResult.rows[0];
+        let assignedCompany = null;
+        let tableNumber = null;
+        let resolvedOrganisationName = cleanOrganisationName;
 
-        if (company.available_chairs <= 0) {
+        if (company_id) {
+            const companyQuery = `
+                SELECT *, (total_chairs - chairs_occupied) as available_chairs, table_number
+                FROM companies
+                WHERE id = $1
+                FOR UPDATE
+            `;
+            const companyResult = await client.query(companyQuery, [company_id]);
+
+            if (companyResult.rows.length === 0) {
+                await client.query('ROLLBACK');
+                return res.status(400).json({ error: 'Company not found' });
+            }
+
+            assignedCompany = companyResult.rows[0];
+
+            if (assignedCompany.available_chairs <= 0) {
+                await client.query('ROLLBACK');
+                return res.status(400).json({ error: 'No available chairs for this company' });
+            }
+
+            tableNumber = assignedCompany.table_number;
+            if (!resolvedOrganisationName) {
+                resolvedOrganisationName = assignedCompany.name;
+            }
+        }
+
+        if (!resolvedOrganisationName) {
             await client.query('ROLLBACK');
-            return res.status(400).json({ error: 'No available chairs for this company' });
+            return res.status(400).json({ error: 'Organisation name is required' });
         }
 
         // Check if email already registered
         const existingGuest = await client.query(
             'SELECT id FROM guests WHERE email = $1',
-            [email]
+            [cleanEmail]
         );
 
         if (existingGuest.rows.length > 0) {
@@ -94,19 +124,30 @@ router.post('/register', async (req, res) => {
 
         // Register guest WITH lucky number
         const guestResult = await client.query(
-            `INSERT INTO guests (name, surname, email, phone, company_id, position, table_number, lucky_number)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `INSERT INTO guests (name, surname, email, phone, company_id, organisation_name, position, table_number, lucky_number)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              RETURNING id, lucky_number`,
-            [name, surname, email, phone, company_id, position, company.table_number, luckyNumber]
+            [
+                cleanName,
+                cleanSurname,
+                cleanEmail,
+                cleanPhone,
+                assignedCompany?.id || null,
+                resolvedOrganisationName,
+                cleanPosition,
+                tableNumber,
+                luckyNumber
+            ]
         );
 
-        // Update chairs occupied
-        await client.query(
-            `UPDATE companies
-             SET chairs_occupied = chairs_occupied + 1
-             WHERE id = $1`,
-            [company_id]
-        );
+        if (assignedCompany) {
+            await client.query(
+                `UPDATE companies
+                 SET chairs_occupied = chairs_occupied + 1
+                 WHERE id = $1`,
+                [assignedCompany.id]
+            );
+        }
 
         await client.query('COMMIT');
 
@@ -115,13 +156,13 @@ router.post('/register', async (req, res) => {
 
         // Prepare guest data for email (include lucky number)
         const guestData = {
-            name,
-            surname,
-            email,
-            phone,
-            company_name: company.name,
-            position,
-            table_number: company.table_number,
+            name: cleanName,
+            surname: cleanSurname,
+            email: cleanEmail,
+            phone: cleanPhone,
+            company_name: resolvedOrganisationName,
+            position: cleanPosition,
+            table_number: tableNumber,
             lucky_number: guestResult.rows[0].lucky_number
         };
 
@@ -138,7 +179,7 @@ router.post('/register', async (req, res) => {
         res.json({
             success: true,
             message: 'Registration successful',
-            tableNumber: company.table_number,
+            tableNumber,
             luckyNumber: guestResult.rows[0].lucky_number,
             guestId: guestResult.rows[0].id
         });
@@ -162,7 +203,7 @@ router.post('/register', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const result = await db.query(`
-            SELECT g.*, c.name as company_name
+            SELECT g.*, ${guestOrganisationSelect}
             FROM guests g
             LEFT JOIN companies c ON g.company_id = c.id
             ORDER BY g.registered_at DESC

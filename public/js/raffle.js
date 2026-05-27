@@ -288,7 +288,7 @@ function startContinuousEffects() {
   }, 500);
 }
 
-// SHOW WINNER MODAL — WITH GOLD NAME & FULL GLOWING COMPANY LINE
+// SHOW WINNER MODAL — WITH GOLD NAME & FULL GLOWING ORGANISATION LINE
 function showWinnerModal(winner) {
   // Update number and name
   document.getElementById('winnerNumber').textContent = `${winner.lucky_number}`;
@@ -301,7 +301,7 @@ function showWinnerModal(winner) {
   // Update sponsor
   document.getElementById('modalSponsorName').textContent = sponsorName;
 
-  // Inject company & table with FULL gold glow effect
+  // Inject organisation & table with FULL gold glow effect
   const detailsDiv = document.getElementById('winnerDetails');
   if (detailsDiv) detailsDiv.remove();
 
@@ -310,7 +310,7 @@ function showWinnerModal(winner) {
   details.innerHTML = `
     <div style="margin-top: 15px; text-align: center; font-size: 18px;">
       <p style="color: #FFD700; text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5); font-weight: bold; letter-spacing: 0.5px;">
-        Company: ${winner.company_name || 'N/A'}
+        Organisation: ${winner.company_name || 'N/A'}
       </p>
       <p style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.6); margin-top: 8px;">
         Table: ${winner.table_number || 'N/A'}
