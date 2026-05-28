@@ -44,7 +44,7 @@ h1,
 }
 
 /* Stagger word appearance */
-.hero-title .word:nth-child(1) { animation-delay: 0.3s; }   /* Welcome */ 
+.hero-title .word:nth-child(1) { animation-delay: 0.3s; }   /* Welcome */
 .hero-title .word:nth-child(3) { animation-delay: 0.6s; }   /*TO*/
 .hero-title .word:nth-child(5) { animation-delay: 0.9s; }   /* Superbrands*/
 .hero-title .word:nth-child(7) { animation-delay: 1.2s; }
@@ -165,6 +165,8 @@ h1,
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 14px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    height: 100px;
 }
 
 .powered-by-label {
@@ -178,8 +180,8 @@ h1,
 .powered-by-logo {
     display: block;
     width: auto;
-    height: 34px;
-    max-width: 120px;
+    height: 54px;
+    max-width: 180px;
     object-fit: contain;
 }
 
@@ -247,8 +249,8 @@ h1,
     }
 
     .powered-by-logo {
-        height: 30px;
-        max-width: 105px;
+        height: 46px;
+        max-width: 156px;
     }
 
     .maz-logo {
@@ -282,8 +284,8 @@ h1,
     }
 
     .powered-by-logo {
-        height: 24px;
-        max-width: 88px;
+        height: 36px;
+        max-width: 124px;
     }
 
     .maz-logo {

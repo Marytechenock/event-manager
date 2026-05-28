@@ -327,6 +327,8 @@ body {
     border-radius: 14px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
     z-index: 20;
+    width: 290px;
+    height: 100px;
 }
 
 .powered-by-label {
@@ -340,8 +342,8 @@ body {
 .powered-by-logo {
     display: block;
     width: auto;
-    height: 34px;
-    max-width: 120px;
+    height: 54px;
+    max-width: 180px;
     object-fit: contain;
 }
 
@@ -434,8 +436,8 @@ canvas#confetti-canvas {
     }
 
     .powered-by-logo {
-        height: 30px;
-        max-width: 104px;
+        height: 46px;
+        max-width: 156px;
     }
 
     .maz-logo {
@@ -457,8 +459,8 @@ canvas#confetti-canvas {
     }
 
     .powered-by-logo {
-        height: 28px;
-        max-width: 100px;
+        height: 38px;
+        max-width: 128px;
     }
 
     .maz-logo {
