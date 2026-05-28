@@ -6,6 +6,13 @@ const guestOrganisationSelect = `
     COALESCE(NULLIF(TRIM(g.organisation_name), ''), c.name) AS company_name
 `;
 
+function requireAdminAuth(req, res, next) {
+    if (req.session && req.session.adminLoggedIn) {
+        return next();
+    }
+    res.status(401).json({ error: 'Unauthorized: Admin login required' });
+}
+
 // Get total chairs across all companies
 async function getTotalChairs(client) {
   const result = await client.query(
@@ -151,9 +158,6 @@ router.post('/register', async (req, res) => {
 
         await client.query('COMMIT');
 
-        // ✅ SET SESSION FLAG FOR SUCCESS PAGE ACCESS
-        req.session.registrationCompleted = true;
-
         // Prepare guest data for email (include lucky number)
         const guestData = {
             name: cleanName,
@@ -200,7 +204,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Get all guests
-router.get('/', async (req, res) => {
+router.get('/', requireAdminAuth, async (req, res) => {
     try {
         const result = await db.query(`
             SELECT g.*, ${guestOrganisationSelect}

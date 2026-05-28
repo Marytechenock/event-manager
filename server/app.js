@@ -3,10 +3,15 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3030;
-const SESSION_SECRET = process.env.SESSION_SECRET
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET) {
+  throw new Error('SESSION_SECRET is required');
+}
 
 // Middleware
 app.use(cors());
@@ -27,70 +32,6 @@ app.use(
   })
 );
 
-// ✅ PAGE FLOW GUARD - Linear flow with refresh support
-function enforcePageFlow(req, res, next) {
-  const path = req.path;
-  const session = req.session;
-  const referer = req.get('Referer');
-
-  // Allow index always
-  if (path === '/' || path === '/index.html') {
-    // Optional: Clear registration state when returning to home
-    if (session) {
-      delete session.onRegistrationPage;
-      // Keep registrationCompleted if needed, or clear it:
-      // delete session.registrationCompleted;
-    }
-    return next();
-  }
-
-  // Registration page: must come from index
-  if (path === '/register.html') {
-    const allowedReferers = [
-      'http://localhost:3000/',
-      'http://localhost:3000/index.html',
-      'http://localhost:3001/',
-      'http://localhost:3001/index.html',
-      'http://localhost:3030/',
-      'http://localhost:3030/index.html',
-      // Add production domains when deployed:
-      'http://143.244.151.95:3030/',
-      'http://143.244.151.95:3030/index.html',
-      'http://143.244.151.95/',
-      'http://143.244.151.95/index.html'
-    ];
-
-    if (!allowedReferers.some(ref => referer?.startsWith(ref))) {
-      return res.redirect('/'); // Block direct access
-    }
-
-    if (session) {
-      session.onRegistrationPage = true;
-    }
-    return next();
-  }
-
-  // Success page: must have completed registration
-  if (path === '/success.html') {
-    if (!session || !session.registrationCompleted) {
-      return res.redirect('/'); // Block invalid access
-    }
-    // ✅ DO NOT delete registrationCompleted → allows refresh!
-    return next();
-  }
-
-  // For all other pages (e.g., admin), optionally clean up
-  if (session) {
-    delete session.onRegistrationPage;
-    // Do NOT auto-delete registrationCompleted here
-  }
-
-  next();
-}
-
-// Apply page flow guard
-app.use(enforcePageFlow);
-
 // 🔒 Protected admin HTML files
 const PROTECTED_HTML_FILES = [
   '/admin-dashboard.html',
@@ -108,18 +49,26 @@ app.use((req, res, next) => {
   express.static(publicPath)(req, res, next);
 });
 
-// Admin auth middleware
-function requireAdminAuth(req, res, next) {
+// Admin page auth middleware
+function requireAdminPageAuth(req, res, next) {
   if (req.session && req.session.adminLoggedIn) {
     return next();
   }
   res.redirect('/admin');
 }
 
+// Admin API auth middleware
+function requireAdminApiAuth(req, res, next) {
+  if (req.session && req.session.adminLoggedIn) {
+    return next();
+  }
+  res.status(401).json({ error: 'Unauthorized: Admin login required' });
+}
+
 // API Routes
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/guests', require('./routes/guests'));
-app.use('/api/companies', require('./routes/companies'));
+app.use('/api/companies', requireAdminApiAuth, require('./routes/companies'));
 app.use('/api/raffle', require('./routes/raffle'));
 
 // === PUBLIC ROUTES ===
@@ -145,22 +94,22 @@ app.get('/admin/', (req, res) => {
 });
 
 // === PROTECTED ADMIN PAGES ===
-app.get('/admin-dashboard.html', requireAdminAuth, (req, res) => {
+app.get('/admin-dashboard.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/admin-dashboard.html'));
 });
 
-app.get('/manage-companies.html', requireAdminAuth, (req, res) => {
+app.get('/manage-companies.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/manage-companies.html'));
 });
 
-app.get('/raffle-setup.html', requireAdminAuth, (req, res) => {
+app.get('/raffle-setup.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/raffle-setup.html'));
 });
 
-app.get('/raffle-wheel.html', requireAdminAuth, (req, res) => {
+app.get('/raffle-wheel.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/raffle-wheel.html'));
 });
