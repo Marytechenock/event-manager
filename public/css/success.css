@@ -307,10 +307,16 @@ body {
     gap: 0.85rem;
 }
 
+.sponsor-showcase {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 0.35rem;
+}
+
 .powered-by-badge {
-    position: fixed;
-    right: clamp(0.75rem, 2.5vw, 1.5rem);
-    bottom: clamp(0.75rem, 2.5vw, 1.5rem);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -337,6 +343,18 @@ body {
     height: 34px;
     max-width: 120px;
     object-fit: contain;
+}
+
+.maz-logo-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.maz-logo {
+    width: min(180px, 58vw);
+    max-width: 100%;
+    height: auto;
 }
 
 /* ===== Confetti Canvas ===== */
@@ -374,10 +392,16 @@ canvas#confetti-canvas {
         font-size: clamp(0.98rem, 3.8vw, 1.12rem);
     }
 
+    .sponsor-showcase {
+        gap: 0.7rem;
+    }
+
     .powered-by-badge {
-        position: static;
-        align-self: center;
-        margin-top: 0.75rem;
+        margin-top: 0.55rem;
+    }
+
+    .maz-logo {
+        width: min(150px, 48vw);
     }
 }
 
@@ -404,6 +428,19 @@ canvas#confetti-canvas {
     .exit-btn {
         width: 100%;
     }
+
+    .powered-by-badge {
+        padding: 0.5rem 0.65rem;
+    }
+
+    .powered-by-logo {
+        height: 30px;
+        max-width: 104px;
+    }
+
+    .maz-logo {
+        width: min(132px, 54vw);
+    }
 }
 
 @media (max-width: 320px) {
@@ -422,5 +459,9 @@ canvas#confetti-canvas {
     .powered-by-logo {
         height: 28px;
         max-width: 100px;
+    }
+
+    .maz-logo {
+        width: min(110px, 58vw);
     }
 }

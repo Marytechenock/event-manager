@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const registrationForm = document.getElementById('registrationForm');
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Handle form submission
     if (registrationForm) {
@@ -20,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Validate required fields
             if (!formData.name || !formData.surname || !formData.email || !formData.phone || !formData.organisation_name || !formData.position) {
                 alert('⚠️ Please fill in all required fields.');
+                return;
+            }
+
+            if (!EMAIL_REGEX.test(formData.email)) {
+                alert('⚠️ Please enter a valid email address.');
                 return;
             }
 

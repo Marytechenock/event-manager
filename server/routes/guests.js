@@ -5,6 +5,7 @@ const { sendRegistrationEmail } = require('../services/emailService');
 const guestOrganisationSelect = `
     COALESCE(NULLIF(TRIM(g.organisation_name), ''), c.name) AS company_name
 `;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function requireAdminAuth(req, res, next) {
     if (req.session && req.session.adminLoggedIn) {
@@ -71,6 +72,11 @@ router.post('/register', async (req, res) => {
         if (!cleanName || !cleanSurname || !cleanEmail || !cleanPhone || !cleanPosition) {
             await client.query('ROLLBACK');
             return res.status(400).json({ error: 'All required fields must be provided' });
+        }
+
+        if (!EMAIL_REGEX.test(cleanEmail)) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ error: 'Please provide a valid email address' });
         }
 
         let assignedCompany = null;
@@ -170,22 +176,24 @@ router.post('/register', async (req, res) => {
             lucky_number: guestResult.rows[0].lucky_number
         };
 
-        console.log('Guest data:', guestData);
-
-        // Send confirmation email
-        try {
-            await sendRegistrationEmail(guestData);
-        } catch (emailError) {
-            console.error('Failed to send email:', emailError);
-            // Don't fail the request if email fails
-        }
-
         res.json({
             success: true,
             message: 'Registration successful',
             tableNumber,
             luckyNumber: guestResult.rows[0].lucky_number,
             guestId: guestResult.rows[0].id
+        });
+
+        setImmediate(async () => {
+            try {
+                await sendRegistrationEmail(guestData);
+            } catch (emailError) {
+                console.error('Background email send failed:', {
+                    guestId: guestResult.rows[0].id,
+                    email: cleanEmail,
+                    error: emailError.message
+                });
+            }
         });
     } catch (error) {
         await client.query('ROLLBACK');
