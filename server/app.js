@@ -6,6 +6,7 @@ const session = require('express-session');
 
 const app = express();
 const PORT = process.env.PORT || 3030;
+const SESSION_SECRET = process.env.SESSION_SECRET
 
 // Middleware
 app.use(cors());
@@ -15,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Session setup
 app.use(
   session({
-    secret: 'maz-event-secret-key-2025-change-in-production',
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -51,10 +52,12 @@ function enforcePageFlow(req, res, next) {
       'http://localhost:3001/',
       'http://localhost:3001/index.html',
       'http://localhost:3030/',
-      'http://localhost:3030/index.html'
+      'http://localhost:3030/index.html',
       // Add production domains when deployed:
-      // 'https://yourevent.com/',
-      // 'https://yourevent.com/index.html'
+      'http://143.244.151.95:3030/',
+      'http://143.244.151.95:3030/index.html',
+      'http://143.244.151.95/',
+      'http://143.244.151.95/index.html'
     ];
 
     if (!allowedReferers.some(ref => referer?.startsWith(ref))) {
@@ -179,6 +182,6 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`MAZ Event App running on http://localhost:${PORT}`);
-  console.log(`Admin running on http://localhost:${PORT}/admin`);
+  console.log(`MAZ Event App running on http://143.244.151.95:${PORT}`);
+  console.log(`Admin running on http://143.244.151.95:${PORT}/admin`);
 });
