@@ -19,7 +19,8 @@ const colors = [
 const celebrationWords = [
   '🎉', '🏆', '✨', '🔥', '💫',
   'Bravo!', 'Amazing!', 'Congratulations!',
-  'You Won!', 'Jackpot!', 'Anthony Higgins!'
+  'You Won!', 'Jackpot!', 'Anthony Higgins!',
+  'Amhlophe!'
 ];
 
 // Sponsor logos
@@ -312,9 +313,7 @@ function showWinnerModal(winner) {
       <p style="color: #FFD700; text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5); font-weight: bold; letter-spacing: 0.5px;">
         Organisation: ${winner.company_name || 'N/A'}
       </p>
-      <p style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.6); margin-top: 8px;">
-        Table: ${winner.table_number || 'N/A'}
-      </p>
+     
     </div>
   `;
   document.getElementById('modalContent').appendChild(details);

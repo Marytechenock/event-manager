@@ -13,92 +13,105 @@
     </style>
 </head>
 <body>
-    <main class="success-page">
-        <div class="top-logo">
-            <img src="assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
+<main class="success-page">
+    <div class="top-logo">
+        <img src="assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
+    </div>
+
+    <h1 class="hero-title">
+        Registration <br>
+        Successful!
+    </h1>
+
+    <p class="success-message">
+        Thank you for registering for the MAZ
+        <span class="success-mess">Interbrands Sports Games 2026</span>
+    </p>
+    <div class="containerr">
+        <div class="table-assignment">
+            <div class="tabl-label">Your Lucky Number</div>
+            <div class="tabl-label" id="luckyNumber">###</div>
+            <div class="card-instruction">Keep this for the raffle draw</div>
         </div>
 
-        <h1 class="hero-title">
-            Registration <br>
-            Successful!
-        </h1>
+    </div>
 
-        <p class="success-message">
-            Thank you for registering for the MAZ
-            <span class="success-mess">Superbrand Business Banquet 2026</span>
-        </p>
+    <div class="success-actions">
+        <a id="program-btn" href="downloads/Superbrand Banquet 2026 Program (CMYK)_pages-to-jpg-0001.jpg.jpeg" class="btn-luxury" target="_blank">
+            View and download the event program
+        </a>
 
-        <div class="success-actions">
-            <a id="program-btn" href="downloads/Superbrand Banquet 2026 Program (CMYK)_pages-to-jpg-0001.jpg.jpeg" class="btn-luxury" target="_blank">
-                View and download the event program
-            </a>
+        <button class="exit-btn" onclick="exitGracefully()">Exit</button>
+    </div>
 
-            <button class="exit-btn" onclick="exitGracefully()">Exit</button>
-        </div>
-
-        <div class="sponsor-showcase" aria-label="Sponsors">
-            <div class="powered-by-badge">
-                <span class="powered-by-label">Powered By</span>
-                <img
-                    src="assets/images/ecobank.png"
-                    alt="Ecobank logo"
+    <div class="sponsor-showcase" aria-label="Sponsors">
+        <div class="powered-by-badge">
+            <span class="powered-by-label">Powered By</span>
+            <img
+                    src="assets/images/Huletts.jpg"
+                    alt="Huletts logo"
                     class="powered-by-logo"
-                />
-            </div>
+            />
         </div>
-    </main>
+    </div>
+</main>
 
-    <!-- Confetti Script -->
-    <script>
-            function exitGracefully() {
-                window.location.href = 'index.html';
-            }
+<!-- Confetti Script -->
+<script>
+    function exitGracefully() {
+        window.location.href = 'index.html';
+    }
 
-        // Get table number from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const tableNumber = urlParams.get('table');
-        const luckyNumber = urlParams.get('lucky');
+    // Get table number from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNumber = urlParams.get('table');
+    const luckyNumber = urlParams.get('lucky');
 
-        // Start confetti on load
-        function startConfetti() {
-            const duration = 5 * 1000; // 40 seconds
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+    if (luckyNumber) {
+        document.getElementById('luckyNumber').textContent = luckyNumber;
+    }
 
-            const interval = setInterval(() => {
-                const timeLeft = animationEnd - Date.now();
+    // Start confetti on load
+    function startConfetti() {
+        const duration = 5 * 1000; // 40 seconds
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                const particleCount = 100 * (timeLeft / duration);
-                confetti(
-                    Object.assign({}, defaults, {
-                        particleCount,
-                        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
-                    })
-                );
-            }, 250);
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
-        // Trigger confetti when page loads
-        window.addEventListener('load', startConfetti);
+        const interval = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 100 * (timeLeft / duration);
+            confetti(
+                Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+                })
+            );
+        }, 250);
+    }
+
+    // Trigger confetti when page loads
+    window.addEventListener('load', startConfetti);
 
 
     document.addEventListener('DOMContentLoaded', function() {
         const btn = document.getElementById('program-btn');
         if (btn) {
-      // Add flicker class → triggers animation once
-        btn.classList.add('flick-5');
-    }
-  });
+            // Add flicker class → triggers animation once
+            btn.classList.add('flick-5');
+        }
+    });
 
 
-    </script>
+</script>
 </body>
 </html>
