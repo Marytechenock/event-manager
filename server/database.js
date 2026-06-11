@@ -9,9 +9,9 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  // ssl: {
-  //   rejectUnauthorized: false
-  // }
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Initialize database
@@ -64,7 +64,6 @@ async function initializeDatabase() {
         ADD COLUMN IF NOT EXISTS registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     `)
 
-    // ✅ NEW: Raffle Winners Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS raffle_winners (
         id SERIAL PRIMARY KEY,
