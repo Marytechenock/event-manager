@@ -1,381 +1,341 @@
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      min-height: 100vh;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .container {
-      max-width: 1080px;
-      margin: 30px auto;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(209, 223, 229, 0.3);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 215, 0, 0.1);
-      position: relative;
-      z-index: 10;
-    }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-    .exit-btn {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      width: 30px;
-      height: 40px;
-      background: rgba(255, 215, 0, 0.1);
-      color: #1a1706;
-      /*border: 2px solid #FFD700;*/
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      z-index: 100;
-    }
+/* Hide "Activate Windows" */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 25%);
+}
 
-    .exit-btn:hover {
-      background: #FFD700;
-      color: #888888;
-      transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    }
+/* ===== WINNER MODAL ===== */
+#winnerModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s;
+  overflow: hidden;
+}
 
-    h1 {
-      background: linear-gradient(45deg, #080700, #FFEC8B);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 2.5em;
-      font-weight: 700;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-      padding: 0 50px; /* Add padding to account for exit button */
-    }
+#winnerModal.show {
+  opacity: 1;
+  visibility: visible;
+}
 
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      margin: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+/* ✅ MAIN CONTENT: MOVED UP (NO CENTERING) */
+#modalContent {
+  text-align: center;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Start from top */
+  gap: 12px;
+  padding: 40px 20px 30px; /* Adjust top padding as needed */
+  position: relative;
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+  margin-top: 0;
+}
 
-    #drawBtn {
-      background: linear-gradient(45deg, #FFD700, #D4AF37);
-      color: #1a1a1a;
-    }
-    #drawBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-    }
+#modalSponsorHeader {
+  font-size: clamp(18px, 4vw, 24px);
+  color: #FFD700;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 
-    #resetBtn {
-      background: linear-gradient(45deg, #666, #444);
-      color: white;
-    }
-    #resetBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
-    }
+#winnerNumber {
+  font-size: clamp(80px, 20vw, 160px);
+  font-weight: 900;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  animation: numberGlow 3s ease-in-out infinite;
+}
 
-    .wheel-container {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      margin: 30px auto;
-      transition: all 0.3s ease;
-    }
+#congratsText {
+  font-size: clamp(24px, 6vw, 36px);
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+}
 
-    #wheel {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 50%;
-      box-shadow:
-        0 0 0 8px rgba(255, 215, 0, 0.3),
-        0 0 30px rgba(255, 215, 0, 0.2),
-        inset 0 0 20px rgba(0, 0, 0, 0.3);
-      background: #ffffff;
-    }
+#winnerCompanyLine, #winnerTableLine {
+  font-size: clamp(18px, 4.5vw, 26px);
+  color: white;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  width: 100%;
+  max-width: 600px;
+}
 
-    .pointer {
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 35px solid #141101;
-      z-index: 20;
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-    }
+#winnerCompanyLine {
+  color: #FFD700;
+  font-weight: bold;
+}
 
-    .winner-display {
-      font-size: 32px;
-      font-weight: bold;
-      background: linear-gradient(45deg, #FFD700, #FFA500);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin: 20px 0;
-      text-align: center;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-    }
+/* Close Button */
+#closeModalBtn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #FFD700;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+  z-index: 20;
+  transition: all 0.3s ease;
+}
 
-    #winners {
-      margin-top: 20px;
-      text-align: left;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      max-height: 150px;
-      overflow-y: auto;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      backdrop-filter: blur(5px);
-    }
+#closeModalBtn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 25px rgba(255, 215, 0, 0.7);
+}
 
-    .winner-item {
-      margin: 8px 0;
-      font-weight: bold;
-      color: #FFD700;
-      padding: 5px 10px;
-      background: rgba(255, 215, 0, 0.1);
-      border-radius: 5px;
-      border-left: 3px solid #FFD700;
-    }
+/* ✅ LOGOS STAY AT BOTTOM */
+.sponsor-logos {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
 
-    /* === WINNER MODAL === */
-    #winnerModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.6s ease, visibility 0.6s;
-      overflow: hidden;
-    }
+.sponsor-logos h3 {
+  color: #FFD700;
+  margin: 0 0 12px;
+  font-size: clamp(16px, 3.5vw, 18px);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  font-weight: 600;
+}
 
-    #winnerModal.show {
-      opacity: 1;
-      visibility: visible;
-    }
+.logos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(15px, 4vw, 25px);
+  max-width: 90%;
+  margin: 0 auto;
+}
 
-    #modalContent {
-      text-align: center;
-      z-index: 10;
-      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      opacity: 0;
-    }
+.sponsor-logo {
+  height: 50px;
+  max-width: 120px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.1);
+}
 
-    #modalSponsorHeader {
-      font-size: 24px;
-      color: #FFD700;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
-      font-weight: bold;
-    }
+/* Animations */
+@keyframes numberGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+  50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); }
+}
 
-    .trophy {
-      font-size: 120px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-      color: #FFD700;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
 
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-      }
-      to {
-        text-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8);
-      }
-    }
+/* ===== Rest of your styles (wheel, buttons, etc.) ===== */
 
-    #winnerNumber {
-      font-size: 160px;
-      font-weight: 900;
-      background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin: 0;
-      text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-      animation: numberGlow 3s ease-in-out infinite;
-    }
+.container {
+  max-width: 1080px;
+  margin: 30px auto;
+  background: #222;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(209, 223, 229, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
 
-    @keyframes numberGlow {
-      0%, 100% {
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      }
-      50% {
-        text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6);
-      }
-    }
+.exit-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  width: 30px;
+  height: 40px;
+  background: rgba(255, 215, 0, 0.1);
+  color: #1a1706;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
 
-    #congratsText {
-      font-size: 42px;
-      color: #FFD700;
-      margin-top: 20px;
-      font-weight: bold;
-      text-shadow: 0 2px 15px rgba(255, 215, 0, 0.5);
-    }
+.exit-btn:hover {
+  background: #FFD700;
+  color: #888888;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
 
-    #closeModalBtn {
-      margin-top: 40px;
-      padding: 15px 40px;
-      font-size: 22px;
-      background: linear-gradient(45deg, #FFD700, #D4AF37);
-      color: #1a1a1a;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-      transition: all 0.3s ease;
-    }
+h1 {
+  background: linear-gradient(45deg, #080700, #FFEC8B);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2.5em;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+  padding: 0 50px;
+}
 
-    #closeModalBtn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
-    }
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
 
-    .floating-dot {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 5;
-      bottom: -20px;
-    }
+#drawBtn {
+  background: linear-gradient(45deg, #FFD700, #D4AF37);
+  color: #1a1a1a;
+}
+#drawBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
 
-    .celebration-word {
-      position: absolute;
-      color: #070600;
-      font-weight: bold;
-      font-size: 20px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-      opacity: 0.9;
-      pointer-events: none;
-      z-index: 5;
-      bottom: -20px;
-    }
+#resetBtn {
+  background: linear-gradient(45deg, #666, #444);
+  color: white;
+}
+#resetBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
 
-    @keyframes popIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.6);
-      }
-      70% {
-        transform: scale(1.05);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
+.wheel-container {
+  position: relative;
+  width: 100%;
+  max-width: 570px;
+  margin: 30px auto;
+}
 
-    @keyframes floatUpDot {
-      to {
-        transform: translateY(-100vh) scale(1.4);
-        opacity: 0;
-      }
-    }
+#wheel {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 8px rgba(255, 215, 0, 0.3),
+    0 0 30px rgba(255, 215, 0, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+}
 
-    @keyframes floatUpWord {
-      to {
-        transform: translateY(-100vh) rotate(20deg);
-        opacity: 0;
-      }
-    }
+.pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 35px solid #141101;
+  z-index: 20;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .container {
-        margin: 15px;
-        padding: 15px;
-      }
+.winner-display {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 20px 0;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
 
-      h1 {
-        font-size: 2em;
-        padding: 0 40px;
-      }
+#winners {
+  margin-top: 20px;
+  text-align: left;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
 
-      .exit-btn {
-        top: 10px;
-        right: 15px;
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-      }
+.winner-item {
+  margin: 8px 0;
+  font-weight: bold;
+  color: #FFD700;
+  padding: 5px 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 5px;
+  border-left: 3px solid #FFD700;
+}
 
-      .winner-display {
-        font-size: 28px;
-      }
-
-      #winnerNumber {
-        font-size: 120px;
-      }
-
-      #congratsText {
-        font-size: 32px;
-      }
-
-      .trophy {
-        font-size: 80px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.8em;
-        padding: 0 35px;
-      }
-
-      .exit-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 16px;
-      }
-
-      button {
-        padding: 10px 18px;
-        font-size: 14px;
-      }
-
-      .winner-display {
-        font-size: 24px;
-      }
-
-      #winnerNumber {
-        font-size: 80px;
-      }
-
-      #congratsText {
-        font-size: 24px;
-      }
-    }
-
-
+/* Floating effects (optional) */
+.floating-dot, .celebration-word {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}

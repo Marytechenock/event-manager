@@ -3,9 +3,15 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET) {
+  throw new Error('SESSION_SECRET is required');
+}
 
 // Middleware
 app.use(cors());
@@ -15,81 +21,95 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Session setup
 app.use(
   session({
-    secret: 'maz-event-secret-key-2025-change-in-production',
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // set to true in production if using HTTPS
+      secure: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
 
-// 🔒 List of protected HTML files (relative to public/)
+// 🔒 Protected admin HTML files
 const PROTECTED_HTML_FILES = [
   '/admin-dashboard.html',
   '/manage-companies.html',
   '/raffle-setup.html',
   '/raffle-wheel.html'
-  // Add more if needed
 ];
 
-// Custom static middleware: skip protected files
+// Static file middleware
 const publicPath = path.join(__dirname, '../public');
 app.use((req, res, next) => {
-  // If the requested path is a protected HTML file, skip static serving
   if (PROTECTED_HTML_FILES.includes(req.path)) {
-    return next(); // let explicit routes handle it
+    return next(); // Let explicit routes handle admin pages
   }
-  // Otherwise, serve static files normally
   express.static(publicPath)(req, res, next);
 });
 
-// Auth middleware
-function requireAdminAuth(req, res, next) {
+// Admin page auth middleware
+function requireAdminPageAuth(req, res, next) {
   if (req.session && req.session.adminLoggedIn) {
     return next();
   }
   res.redirect('/admin');
 }
 
+// Admin API auth middleware
+function requireAdminApiAuth(req, res, next) {
+  if (req.session && req.session.adminLoggedIn) {
+    return next();
+  }
+  res.status(401).json({ error: 'Unauthorized: Admin login required' });
+}
+
 // API Routes
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/guests', require('./routes/guests'));
-app.use('/api/companies', require('./routes/companies'));
+app.use('/api/companies', requireAdminApiAuth, require('./routes/companies'));
+app.use('/api/raffle', require('./routes/raffle'));
 
 // === PUBLIC ROUTES ===
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-
-app.get('/admin/', (req, res) => {
-  res.redirect('/admin-login.html');
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/register.html'));
 });
 
+app.get('/success.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/success.html'));
+});
+
+// Admin login (public)
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin-login.html'));
 });
 
+app.get('/admin/', (req, res) => {
+  res.redirect('/admin');
+});
+
 // === PROTECTED ADMIN PAGES ===
-app.get('/admin-dashboard.html', requireAdminAuth, (req, res) => {
+app.get('/admin-dashboard.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/admin-dashboard.html'));
 });
 
-app.get('/manage-companies.html', requireAdminAuth, (req, res) => {
+app.get('/manage-companies.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/manage-companies.html'));
 });
 
-app.get('/raffle-setup.html', requireAdminAuth, (req, res) => {
+app.get('/raffle-setup.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/raffle-setup.html'));
 });
 
-app.get('/raffle-wheel.html', requireAdminAuth, (req, res) => {
+app.get('/raffle-wheel.html', requireAdminPageAuth, (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, '../public/raffle-wheel.html'));
 });
@@ -111,5 +131,6 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`MAZ Event App running on http://localhost:${PORT}`);
+  console.log(`MAZ Event App running on http://143.244.151.95:${PORT}`);
+  console.log(`Admin running on http://143.244.151.95:${PORT}/admin`);
 });

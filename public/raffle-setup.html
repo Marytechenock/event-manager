@@ -39,16 +39,14 @@
           </svg>
           Raffle Setup
         </h1>
+
+        <!-- Minimal Form: Only Company Name -->
         <form id="raffleForm">
           <div class="form-group">
             <label for="companyName">Company Sponsoring the Raffle</label>
-            <input type="text" id="companyName" placeholder="e.g., MaryTechnock" required>
+            <input type="text" id="companyName" placeholder="e.g., MaryTechnock Solutions" required>
           </div>
-          <div class="form-group">
-            <label for="totalTickets">Number of Tickets Issued (Participants)</label>
-            <input type="number" id="totalTickets" min="1" value="10" required>
-          </div>
-          <button type="submit">Start Raffle</button>
+          <button type="submit" class="raffle-btn">Start Raffle</button>
         </form>
       </div>
     </div>
@@ -56,7 +54,7 @@
 
   <!-- Load Shared Sidebar -->
   <script>
-    // Load sidebar from external file
+    // DO NOT CHANGE — keep your existing sidebar logic
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
@@ -65,7 +63,6 @@
       })
       .catch(err => console.error('Failed to load sidebar:', err));
 
-    // Auto-highlight current page
     function setActiveMenuItem() {
       const currentPage = window.location.pathname.split('/').pop();
       document.querySelectorAll('.menu-item').forEach(item => {
@@ -76,19 +73,20 @@
       });
     }
 
-    // Sidebar toggle for mobile
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
       sidebar?.classList.toggle('open');
     }
 
-    // Shared logout function
     function logout() {
-      localStorage.removeItem('adminLoggedIn');
-      window.location.href = 'admin-login.html';
+      fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      }).finally(() => {
+        window.location.href = 'admin-login.html';
+      });
     }
 
-    // Close sidebar on outside click (mobile)
     document.addEventListener('click', function(e) {
       const sidebar = document.querySelector('.sidebar');
       const toggle = document.querySelector('.sidebar-toggle');
@@ -98,19 +96,19 @@
     });
   </script>
 
-  <!-- Raffle Form Logic -->
+  <!-- Minimal Form Logic -->
   <script>
-    document.getElementById('raffleForm')?.addEventListener('submit', function(e) {
+    document.getElementById('raffleForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
       const company = document.getElementById('companyName').value.trim();
-      const tickets = document.getElementById('totalTickets').value;
-
-      if (!company || isNaN(tickets) || tickets < 1) {
-        alert("Please enter a valid company name and number of tickets.");
+      if (!company) {
+        alert('Please enter the sponsoring company name.');
         return;
       }
 
-      const url = `raffle-wheel.html?company=${encodeURIComponent(company)}&tickets=${tickets}`;
+      // Pass company name to next page via URL
+      const url = `raffle-wheel.html?company=${encodeURIComponent(company)}`;
       window.location.href = url;
     });
   </script>

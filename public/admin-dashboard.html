@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css  ">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/admin-dashboard.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
@@ -12,7 +12,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <img src="assets/images/MAZ_logo-01.png" alt="Logo">
+            <img src="assets/images/top-logo.png" alt="Logo">
         </div>
         <nav class="sidebar-menu">
             <div class="menu-item active">
@@ -47,25 +47,25 @@
             <div class="metric-card">
                 <h3>Total Attendances</h3>
                 <div class="value" id="totalAttendees">0</div>
-                <div class="trend up">+0% <span>↗</span></div>
+                <div class="utilization" id="attendanceUtil">0%</div>
                 <div class="icon">📈</div>
             </div>
             <div class="metric-card">
-                <h3>Total Companies</h3>
-                <div class="value" id="totalCompanies">0</div>
-                <div class="trend up">+0% <span>↗</span></div>
+                <h3>Registered Organisations</h3>
+                <div class="value" id="companyAttendanceCount">0</div>
+                <div class="utilization" id="companyAttendanceUtil">0%</div>
                 <div class="icon">📈</div>
             </div>
             <div class="metric-card">
                 <h3>Available Chairs</h3>
                 <div class="value" id="availableChairs">0</div>
-                <div class="trend up">+0% <span>↗</span></div>
+                <div class="utilization" id="availableChairsUtil">0%</div>
                 <div class="icon">📈</div>
             </div>
             <div class="metric-card">
                 <h3>Occupied Chairs</h3>
                 <div class="value" id="occupiedChairs">0</div>
-                <div class="trend up">+0% <span>↗</span></div>
+                <div class="utilization" id="occupiedChairsUtil">0%</div>
                 <div class="icon">📈</div>
             </div>
         </div>
@@ -83,9 +83,9 @@
                 <div>Name</div>
                 <div>Surname</div>
                 <div>Email</div>
-                <div>Company</div>
+                <div>Organisation</div>
                 <div>Table</div>
-                <div>Time</div>
+                <div>Lucky Number</div> 
             </div>
             <div class="table-body">
                 <div id="recentGuests">
@@ -95,7 +95,12 @@
         </div>
 
         <!-- All Attendees -->
-        <div class="section-title">All Attendees</div>
+        <div class="section-title">
+            All Attendees
+            <button id="exportBtn" class="export-btn">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+        </div>
         <div class="table-container" id="allGuestsTableContainer">
             <input type="text" id="searchAttendees" placeholder="Search attendees...">
             <div class="all-guests-header">
@@ -103,13 +108,35 @@
                 <div>Surname</div>
                 <div>Email</div>
                 <div>Phone</div>
-                <div>Company</div>
+                <div>Organisation</div>
                 <div>Position</div>
                 <div>Table</div>
-                <div>Registered</div>
+                <div>Lucky Number</div> 
             </div>
             <div class="table-body">
                 <div id="allGuests">
+                </div>
+            </div>
+        </div>
+
+        <!-- Raffle Winners -->
+        <div class="section-title">
+            Raffle Winners
+            <button id="exportWinnersPdf" class="export-btn">
+                <i class="fas fa-file-pdf"></i> Export as PDF
+            </button>
+        </div>
+        <div class="table-container" id="winnersTableContainer">
+            <div class="winners-header">
+                <div>Lucky Number</div>
+                <div>Name</div>
+                <div>Organisation</div>
+                <div>Table</div>
+                <div>Sponsor</div>
+            </div>
+            <div class="table-body">
+                <div id="raffleWinnersList">
+                    <!-- Winners will be injected here -->
                 </div>
             </div>
         </div>

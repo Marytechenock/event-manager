@@ -75,7 +75,7 @@ body {
     color: #dc3545;
 }
 
-/* ===== SIDEBAR FOOTER (NEW) ===== */
+/* ===== SIDEBAR FOOTER ===== */
 .sidebar-footer {
     padding: 16px 30px;
     margin-top: auto;
@@ -163,14 +163,45 @@ body {
     opacity: 0.5;
 }
 
-/* ===== COMPANIES SECTION ===== */
+/* ===== SECTION TITLE WITH EXPORT BUTTON ===== */
 .section-title {
     font-size: 18px;
     color: #2c3e50;
     margin: 30px 0 15px 0;
     font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+.section-title h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* ===== EXPORT BUTTON ===== */
+.export-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.export-btn:hover {
+    background-color: #218838;
+}
+
+/* ===== COMPANIES SECTION ===== */
 #companiesStatus {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -292,64 +323,6 @@ body {
     background-color: #f9f9ff;
 }
 
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: #555;
-    margin-right: 10px;
-}
-
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.status-in-progress {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.status-complete {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-pending {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-.status-approved {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.more-options {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #eee;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.more-options:hover {
-    background: #ddd;
-}
-
 /* ===== ALL ATTENDEES TABLE ===== */
 #allGuestsTableContainer {
     margin-top: 30px;
@@ -392,10 +365,51 @@ body {
     background-color: #f9f9ff;
 }
 
+/* ===== RAFFLE WINNERS TABLE ===== */
+#winnersTableContainer {
+    margin-top: 30px;
+}
+
+.winners-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 1fr 2fr;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.winner-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 1fr 2fr;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+    font-size: 14px;
+}
+
+.winner-row:last-child {
+    border-bottom: none;
+}
+
+.winner-row:nth-child(even) {
+    background-color: #f9f9ff;
+}
+
 /* ===== VIEW ALL COMPANIES BUTTON ===== */
 .view-all-companies {
     text-align: center;
     padding: 15px 0 5px 0;
+}
+
+/* ===== UTILIZATION METRICS ===== */
+.metric-card .utilization {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 4px;
+    color: #218838;;
 }
 
 .view-all-companies a {
@@ -409,6 +423,22 @@ body {
 
 .view-all-companies a:hover {
     text-decoration: underline;
+}
+
+/* ===== STATUS BADGES ===== */
+.status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-partial {
+    background-color: #fff3cd;
+    color: #856404;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -427,10 +457,21 @@ body {
     .metrics-row {
         flex-direction: column;
     }
+    .section-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .export-btn {
+        align-self: stretch;
+        justify-content: center;
+    }
     .table-header,
     .table-row,
     .all-guests-header,
-    .all-guests-row {
+    .all-guests-row,
+    .winners-header,
+    .winner-row {
         grid-template-columns: 1fr;
         gap: 8px;
     }

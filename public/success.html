@@ -9,16 +9,14 @@
     <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="css/success.css">
-    <style>  
+    <style>
     </style>
 </head>
 <body>
-    <!-- Top Logo Area -->
+<main class="success-page">
     <div class="top-logo">
-        <!-- Replace src with your actual logo path -->
-        <img src="/assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
+        <img src="assets/images/top-logo.png" alt="MAZ Superbrand Awards Logo" />
     </div>
-
 
     <h1 class="hero-title">
         Registration <br>
@@ -26,79 +24,94 @@
     </h1>
 
     <p class="success-message">
-            Thank you for registering for the MAZ <br/> 
-            <span><p class = success-mess>Superbrand Awards 2025</p></span>
+        Thank you for registering for the MAZ
+        <span class="success-mess">Interbrands Sports Games 2026</span>
     </p>
-
-
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Table Assignment -->
+    <div class="containerr">
         <div class="table-assignment">
-            <div class="table-label">Your Table Assignment</div>
-            <div class="table-number" id="tableNumber" data-text="Table 3">Table 3</div>
-            <div class="table-instruction">Please proceed to your assigned table</div>
+            <div class="tabl-label">Your Lucky Number</div>
+            <div class="tabl-label" id="luckyNumber">###</div>
+            <div class="card-instruction">Keep this for the raffle draw</div>
         </div>
 
     </div>
 
-    <!-- Download Button -->
-        <a href="downloads/event-program.pdf" class="btn-luxury" download>
-            View and download the event program
-        </a>
+    <div class="success-actions">
+<!--        <a id="program-btn" href="downloads/Superbrand Banquet 2026 Program (CMYK)_pages-to-jpg-0001.jpg.jpeg" class="btn-luxury" target="_blank">-->
+<!--            View and download the event program-->
+<!--        </a>-->
 
-       <button class="exit-btn" onclick="exitGracefully()">Exit</button>
-
-        <div class="sadc-text">Leading digital transformation in SADC</div>
-
-        <!-- Bottom Logo Area -->
-        <div class="bottom-logo">
-            <img src="assets/images/footer-logo.png"/>
-        </div>
+        <button class="exit-btn" onclick="exitGracefully()">Exit</button>
     </div>
 
-    <!-- Confetti Script -->
-    <script>
-            function exitGracefully() {
-                window.location.href = 'index.html';
-            }
+    <div class="sponsor-showcase" aria-label="Sponsors">
+        <div class="powered-by-badge">
+            <span class="powered-by-label">Powered By</span>
+            <img
+                    src="assets/images/Huletts.jpg"
+                    alt="Huletts logo"
+                    class="powered-by-logo"
+            />
+        </div>
+    </div>
+</main>
 
-        // Get table number from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const tableNumber = urlParams.get('table');
-        if (tableNumber) {
-            document.getElementById('tableNumber').textContent = tableNumber;
+<!-- Confetti Script -->
+<script>
+    function exitGracefully() {
+        window.location.href = 'index.html';
+    }
+
+    // Get table number from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNumber = urlParams.get('table');
+    const luckyNumber = urlParams.get('lucky');
+
+
+    if (luckyNumber) {
+        document.getElementById('luckyNumber').textContent = luckyNumber;
+    }
+
+    // Start confetti on load
+    function startConfetti() {
+        const duration = 5 * 1000; // 40 seconds
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
-        // Start confetti on load
-        function startConfetti() {
-            const duration = 5 * 1000; // 40 seconds
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+        const interval = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
             }
 
-            const interval = setInterval(() => {
-                const timeLeft = animationEnd - Date.now();
+            const particleCount = 100 * (timeLeft / duration);
+            confetti(
+                Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+                })
+            );
+        }, 250);
+    }
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+    // Trigger confetti when page loads
+    window.addEventListener('load', startConfetti);
 
-                const particleCount = 100 * (timeLeft / duration);
-                confetti(
-                    Object.assign({}, defaults, {
-                        particleCount,
-                        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
-                    })
-                );
-            }, 250);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('program-btn');
+        if (btn) {
+            // Add flicker class → triggers animation once
+            btn.classList.add('flick-5');
         }
+    });
 
-        // Trigger confetti when page loads
-        window.addEventListener('load', startConfetti);
-    </script>
+
+</script>
 </body>
 </html>

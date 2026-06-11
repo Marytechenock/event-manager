@@ -19,41 +19,44 @@
                 <form id="registrationForm" method="post">
                     <div class="form-group">
                         <label for="name" class="form-label">First Name *</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter first name" required>
                     </div>
 
                     <div class="form-group">
                         <label for="surname" class="form-label">Last Name *</label>
-                        <input type="text" id="surname" name="surname" class="form-control" required>
+                        <input type="text" id="surname" name="surname" class="form-control" placeholder="Enter last name" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address *</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address" required>
                     </div>
 
                     <div class="form-group">
                         <label for="phone" class="form-label">Phone Number *</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter phone number" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="company" class="form-label">Company *</label>
-                        <select id="company" name="company" class="form-control" required>
-                            <div class = "select-co">
-                                <option value="">Select your company</option>
-                            </div>
-                        </select>
+                        <label for="organisation-name" class="form-label">Organisation Name *</label>
+                        <input
+                            type="text"
+                            id="organisation-name"
+                            name="organisation_name"
+                            class="form-control"
+                            placeholder="Enter organisation name"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="position" class="form-label">Position *</label>
-                        <input type="text" id="position" name="position" class="form-control" required>
+                        <input type="text" id="position" name="position" class="form-control" placeholder="Enter your position in your organisation" required>
                     </div>
 
-                    <div class = "form-group">
+                    <div class="form-group">
                         <button type="submit" class="btn-luxury">
-                          Submit
+                            Submit
                         </button>
                     </div>
                 </form>
@@ -61,9 +64,9 @@
         </div>
     </div>
 
-    <!-- Bottom attribution + logo (not in <footer>) -->
+    <!-- Bottom attribution + logo -->
     <div class="mary">
-         <p>Marytechenock Solutions is a technology advisory consultant company for MAZ</p>
+         <p>Marytechenock Solutions Technology Advisory Consultant Company for MAZ</p>
     </div>
     <div class="top-logo-section">
         <div class="maryt">
@@ -71,8 +74,6 @@
         </div>
     </div>
 
-<script src="js/app.js"></script>
-
-
+    <script src="js/app.js"></script>
 </body>
 </html>

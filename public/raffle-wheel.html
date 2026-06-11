@@ -8,17 +8,17 @@
 </head>
 <body>
   <div class="container">
-    <button class="exit-btn" onclick="window.location='raffle-setup.html'" title="Exit">x</button>
-
-    <h1>Raffle Wheel</h1>
+    <button class="exit-btn" onclick="window.location='raffle-setup.html'" title="Exit">×</button>
+    <h1>🎯 Raffle Wheel</h1>
 
     <div class="wheel-container">
       <div class="pointer"></div>
-      <canvas id="wheel" width="500" height="500"></canvas>
+      <canvas id="wheel" width="300" height="300"></canvas>
     </div>
 
     <div style="text-align: center;">
-      <button id="drawBtn" onclick="drawWinner()">Draw Winner</button>
+      <!-- ✅ CORRECTED BUTTON -->
+      <button id="drawBtn" onclick="drawAndSaveWinner()">Draw & Save Winner</button>
       <button id="resetBtn" onclick="resetRaffle()">Reset</button>
     </div>
 
@@ -30,63 +30,24 @@
     </div>
   </div>
 
+  <!-- Winner Modal -->
   <div id="winnerModal">
+    <button id="closeModalBtn" onclick="closeWinnerModal()">Close</button>
     <div id="modalContent">
-      <div id="modalSponsorHeader">Sponsored by: <span id="modalSponsorName">Loading...</span></div>
-
-      <div class="trophy">🏆</div>
+      <div id="modalSponsorHeader">Sponsored by: <span id="modalSponsorName">Econet</span></div>
       <h1 id="winnerNumber">1</h1>
-      <div id="congratsText">Congratulations!</div>
-      <button id="closeModalBtn" onclick="closeWinnerModal()">Close</button>
+      <div id="congratsText">Richard Mutero</div>
+      <div id="winnerDetails"></div>
+    </div>
+
+    <div class="sponsor-logos">
+      <h3>In Partnership With</h3>
+      <div class="logos-container" id="sponsorLogosContainer">
+        <!-- Logos injected by JS -->
+      </div>
     </div>
   </div>
+
   <script src="js/raffle.js"></script>
 </body>
 </html>
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Raffle Wheel</title>
-  <link rel="stylesheet" href="css/raffle.css">
-</head>
-<body>
-  <button class="back-btn" onclick="window.location='raffle-setup.html'">←Back</button>
-
-  <div class="container">
-    <h1>Raffle Wheel</h1>
-
-    <div class="wheel-container">
-      <div class="pointer"></div>
-      <canvas id="wheel" width="500" height="500"></canvas>
-    </div>
-
-    <div style="text-align: center;">
-      <button id="drawBtn" onclick="drawWinner()">Draw Winner</button>
-      <button id="resetBtn" onclick="resetRaffle()">Reset</button>
-    </div>
-
-    <div class="winner-display" id="winnerDisplay">-</div>
-
-    <div id="winners">
-      <strong>Winners so far:</strong>
-      <div id="winnerList"></div>
-    </div>
-  </div>
-
-  <div id="winnerModal">
-    <div id="modalContent">
-      <div id="modalSponsorHeader">Sponsored by: <span id="modalSponsorName">Loading...</span></div>
-
-      <div class="trophy">🏆</div>
-      <h1 id="winnerNumber">1</h1>
-      <div id="congratsText">Congratulations!</div>
-      <button id="closeModalBtn" onclick="closeWinnerModal()">Close</button>
-    </div>
-  </div>
-  <script src="js/raffle.js"></script>
-</body>
-</html> -->

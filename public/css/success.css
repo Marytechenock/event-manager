@@ -21,7 +21,16 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0.75rem; /* ~12px on mobile */
+    padding: 1rem;
+    text-align: center;
+}
+
+.success-page {
+    width: min(100%, 34rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* ===== Container: Slim, Mobile-First, Fits All ===== */
@@ -45,6 +54,27 @@ body {
     overflow-y: auto;
 }
 
+.containerr {
+    background-color: #333333;
+    width: 100%;
+    /* Reduced max-width for phones */
+    max-width: 375px; /* ideal for most mobiles */
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.1rem; /* vertical > horizontal on small screens */
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    /* Prevent overflow on super-short screens */
+    max-height: 90dvh;
+    overflow-y: auto;
+}
+
+
 /* Ensure no scrollbars on desktop by default */
 @media (min-height: 600px) {
     .container {
@@ -62,19 +92,19 @@ body {
 }
 
 .top-logo {
-    margin: 0.5rem 0 1rem;
+    margin: 0;
 }
 
 .top-logo img,
 .bottom-logo img {
-    max-height: 80px; /* slightly smaller on mobile */
+    max-height: 80px;
     width: auto;
     max-width: 80%;
     height: auto;
 }
 
 .bottom-logo {
-    margin-top:0px;
+    margin-top: 0px;
 }
 
 /* ===== Typography — Mobile-Tuned Sizes ===== */
@@ -86,11 +116,11 @@ body {
 }
 
 .hero-title {
-    font-size: clamp(2rem, 7vw, 3.25rem); /* 32–52px */
+    font-size: clamp(2.1rem, 8vw, 3.5rem);
     font-weight: 900;
-    line-height: 1.1;
+    line-height: 1.05;
     color: rgb(239, 198, 121);
-    margin: 0.25rem 0 0.5rem;
+    margin: 0;
 }
 
 .hero-title span {
@@ -99,15 +129,16 @@ body {
 
 .success-message,
 .success-mess {
-    font-size: clamp(1rem, 4vw, 1.25rem); /* 16–20px */
+    font-size: clamp(1rem, 4.2vw, 1.25rem);
     font-weight: 600;
     opacity: 0.9;
     color: black;
-    margin: 0.15rem 0;
+    margin: 0;
 }
 
 .success-mess {
-    margin-bottom: 1rem;
+    display: block;
+    margin-top: 0.35rem;
 }
 
 /* ===== Table Assignment — Prevent overflow ===== */
@@ -116,12 +147,25 @@ body {
     width: 100%;
 }
 
+.tabl-label{
+    color: white;
+    font-weight: 900;
+
+}
+
 .table-label {
     font-size: clamp(0.95rem, 3.8vw, 1.1rem);
     margin-bottom: 0.35rem;
     color: white;
     font-weight: 900;
 }
+
+.card-instruction {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 12px;
+}
+
 
 .table-number {
     font-size: clamp(2.5rem, 7.5vw, 4rem);
@@ -133,33 +177,44 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    /* Start: solid white */
-    color: white;
-
-    /* Enable animated gradient only during animation */
-    background: linear-gradient(
-        to right,
-        white,
-        white
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: white;
-
-    /* Trigger animation */
+    /* 🔷 Activating the gold sweep animation on load */
     animation: goldSweepThrice 5s ease-out forwards;
-}
-@keyframes goldSweepThrice {
-    0% {
-        background: linear-gradient(
+    background: linear-gradient(
             to right,
             white 50%,
             rgb(239, 198, 121) 50%
-        );
-        background-size: 200% 100%;
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* fallback for non-WebKit */
+}
+
+@keyframes flick-5-times {
+    0%   { color: white; }
+    10%  { color: inherit; }
+    20%  { color: white; }
+    30%  { color: inherit; }
+    40%  { color: white }
+    50%  { color: inherit; }
+    60%  { color: white; }
+    70%  { color: inherit; }
+    80%  { color: white; }
+    90%  { color: inherit; }
+    100% { color: white; }
+}
+
+.flick-5 {
+    animation: flick-5-times 3.5s steps(10) forwards;
+}
+
+@keyframes goldSweepThrice {
+    0% {
         background-position: 100% 0;
-        -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        color: transparent;
     }
     33% {
         background-position: -100% 0;
@@ -173,13 +228,16 @@ body {
     66.1% {
         background-position: 100% 0;
     }
+
     99% {
         background-position: -100% 0;
     }
     100% {
-        /* 🔑 CRITICAL: Reset to solid white at the end */
+        /* Reset to solid white */
         background: none;
         -webkit-text-fill-color: white;
+        -webkit-background-clip: unset;
+        background-clip: unset;
         color: white;
     }
 }
@@ -191,49 +249,50 @@ body {
 }
 
 /* ===== Buttons — Compact & Touch-Friendly ===== */
-.btn-luxury{
-    background-color:#333333;
+.btn-luxury {
+    background-color: #333333;
     color: white;
     border: none;
-    padding: 1.65rem 1.5rem; /* slightly smaller */
-    border-radius: 20px;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
     font-weight: 600;
-    font-size: clamp(0.875rem, 3.2vw, 1rem); /* 14–16px */
+    font-size: clamp(0.95rem, 3.6vw, 1rem);
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
     transition: background-color 0.2s;
-    margin-top: 0.5rem;
-    margin-bottom: 5 px;
-    min-width: 140px; /* ensures tap target ≥ 48px */
+    margin: 0;
+    min-width: 140px;
+    width: min(100%, 20rem);
 }
 
 .exit-btn {
     background-color: rgb(239, 198, 121);
     color: black;
     border: none;
-    padding: 0.65rem 1.5rem; /* slightly smaller */
+    padding: 0.85rem 1.5rem;
     border-radius: 6px;
     font-weight: 600;
-    font-size: clamp(0.875rem, 3.2vw, 1rem); /* 14–16px */
+    font-size: clamp(0.95rem, 3.6vw, 1rem);
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
     transition: background-color 0.2s;
-    margin-top: 1.5rem;
-    min-width: 140px; /* ensures tap target ≥ 48px */
+    margin: 0;
+    min-width: 140px;
+    width: min(100%, 12rem);
 }
 
-
-.btn-luxury:hover{
-    background-color:#333333;
-    opacity: 10.95;
+.btn-luxury:hover {
+    background-color: #333333;
+    opacity: 0.95;
 }
 
 .exit-btn:hover {
     background-color: rgb(219, 176, 90);
     opacity: 0.95;
 }
+
 /* ===== Footer ===== */
 .footer-section {
     margin-top: 0.75rem;
@@ -241,10 +300,70 @@ body {
 }
 
 .sadc-text {
-    font-size: clamp(0.75rem, 3vw, 0.875rem); /* 12–14px */
+    font-size: clamp(0.75rem, 3vw, 0.875rem);
     color: black;
     opacity: 0.85;
     margin: 0.5rem 0;
+}
+
+.success-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.sponsor-showcase {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 0.35rem;
+}
+
+.powered-by-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0.7rem;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    z-index: 20;
+    width: 290px;
+    height: 100px;
+}
+
+.powered-by-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #444;
+}
+
+.powered-by-logo {
+    display: block;
+    width: auto;
+    height: 54px;
+    max-width: 180px;
+    object-fit: contain;
+}
+
+.maz-logo-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.maz-logo {
+    width: min(180px, 58vw);
+    max-width: 100%;
+    height: auto;
 }
 
 /* ===== Confetti Canvas ===== */
@@ -258,28 +377,82 @@ canvas#confetti-canvas {
     z-index: 9999 !important;
 }
 
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start;
+        padding: 1.25rem 1rem 2rem;
+    }
+
+    .success-page {
+        gap: 0.9rem;
+    }
+
+    .top-logo img {
+        max-height: 70px;
+        max-width: 74%;
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 7vw, 3rem);
+    }
+
+    .success-message,
+    .success-mess {
+        font-size: clamp(0.98rem, 3.8vw, 1.12rem);
+    }
+
+    .sponsor-showcase {
+        gap: 0.7rem;
+    }
+
+    .powered-by-badge {
+        margin-top: 0.55rem;
+    }
+
+    .maz-logo {
+        width: min(150px, 48vw);
+    }
+}
+
 /* ✅ Extra Mobile Refinements */
 @media (max-width: 375px) {
     body {
         padding: 0.5rem;
     }
-    .container {
-        padding: 1rem 0.75rem;
-        border-radius: 16px;
+
+    .success-page {
+        gap: 0.8rem;
     }
+
     .hero-title {
         font-size: clamp(1.8rem, 8vw, 3rem);
     }
-    .table-number {
-        font-size: clamp(2rem, 8vw, 3.5rem);
+
+    .top-logo img {
+        max-height: 60px;
+        max-width: 78%;
+    }
+
+    .btn-luxury,
+    .exit-btn {
+        width: 100%;
+    }
+
+    .powered-by-badge {
+        padding: 0.5rem 0.65rem;
+    }
+
+    .powered-by-logo {
+        height: 46px;
+        max-width: 156px;
+    }
+
+    .maz-logo {
+        width: min(132px, 54vw);
     }
 }
 
 @media (max-width: 320px) {
-    .container {
-        max-width: 300px;
-        padding: 0.875rem 0.65rem;
-    }
     .top-logo img,
     .bottom-logo img {
         max-height: 44px;
@@ -289,6 +462,15 @@ canvas#confetti-canvas {
     .exit-btn {
         padding: 0.6rem 1.25rem;
         font-size: 0.875rem;
-        min-width: 130px;
+        min-width: 0;
+    }
+
+    .powered-by-logo {
+        height: 38px;
+        max-width: 128px;
+    }
+
+    .maz-logo {
+        width: min(110px, 58vw);
     }
 }

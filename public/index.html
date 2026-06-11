@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         /* Ensure white background and black text */
-      
+
     </style>
 </head>
 <body>
@@ -23,24 +23,35 @@
             <div class="hero-content fade-in-up">
                 <h1 class="hero-title">
                     <span class="word">Welcome</span><br>
-                    <span class="word">TO</span><br>
-                    <span class="word">Superbrand Awards</span><br>
-                    <span class="word">2025</span>
+                    <span class="word">To</span><br>
+                    <span class="word">Interbrands Sports Games</span><br>
+                    <span class="word">2026</span>
                 </h1>
-      
+
                 <!-- Trophy Image -->
                 <div class="trophy-container">
                     <div class="trophy-image">
-                        <img src="assets/images/superbrand.png" alt="MAZ Superbrand Trophy" style="width: 100%; height: auto;">
+                        <img src="assets/images/super.png" alt="MAZ Superbrand Trophy" style="width: 100%; height: auto;">
                     </div>
                 </div>
 
                 <!-- Call to Action -->
-                <div style="margin-top: 0 px;">
+                <div style="margin-top: 0px;">
                     <a href="register.html" class="btn-luxury">
                         Register
                     </a>
-                </div>     
+                </div>
+
+                <div class="sponsor-showcase" aria-label="Sponsors">
+                    <div class="powered-by-badge">
+                        <span class="powered-by-label">Powered By</span>
+                        <img
+                            src="assets/images/Huletts.jpg"
+                            alt="Huletts logo"
+                            class="powered-by-logo"
+                        >
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -49,7 +60,11 @@
             <div class="footer-logo">
                 <img src="assets/images/footer-logo.png" alt="Marytechenock Solutions Logo">
             </div>
-            <p>©2025 Marytechenock Solutions</p>
+            <p>© <span id="currentYear"></span> Marytechenock Solutions.</p>
+
+            <script>
+                document.getElementById('currentYear').innerHTML = new Date().getFullYear();
+            </script>
         </div>
     </div>
 

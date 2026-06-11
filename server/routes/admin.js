@@ -2,6 +2,9 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const db = require('../database');
 const router = express.Router();
+const guestOrganisationSelect = `
+    COALESCE(NULLIF(TRIM(g.organisation_name), ''), c.name) AS company_name
+`;
 
 // 🔐 Admin authentication middleware
 function requireAdminAuth(req, res, next) {
@@ -30,9 +33,9 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // ✅ CREATE SESSION — THIS WAS MISSING!
+        // ✅ CREATE SESSION
         req.session.adminLoggedIn = true;
-        req.session.adminId = admin.id; // optional: store admin ID
+        req.session.adminId = admin.id;
 
         res.json({ 
             message: 'Login successful', 
@@ -74,12 +77,12 @@ router.get('/metrics', requireAdminAuth, async (req, res) => {
         `);
         metrics.companies = companiesResult.rows;
 
-        // All guests with company names
+        // All guests with company names — sorted by registration time
         const guestsResult = await db.query(`
-            SELECT g.*, c.name as company_name
+            SELECT g.*, ${guestOrganisationSelect}
             FROM guests g
             LEFT JOIN companies c ON g.company_id = c.id
-            ORDER BY g.registered_at DESC
+            ORDER BY g.registered_at DESC  -- ✅ SAFE: registered_at EXISTS
         `);
         metrics.guests = guestsResult.rows;
         

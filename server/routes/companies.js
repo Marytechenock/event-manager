@@ -83,15 +83,15 @@ router.put('/:id', async (req, res) => {
         console.error('Error updating company:', error);
         
         // Handle unique constraint violations
-        if (error.code === '23505') {
-            const detail = error.detail || '';
-            if (detail.includes('name')) {
-                return res.status(409).json({ error: 'Company name already exists' });
-            }
-            if (detail.includes('table_number')) {
-                return res.status(409).json({ error: 'Table number already exists' });
-            }
-        }
+        // if (error.code === '23505') {
+        //     const detail = error.detail || '';
+        //     if (detail.includes('name')) {
+        //         return res.status(409).json({ error: 'Company name already exists' });
+        //     }
+        //     if (detail.includes('table_number')) {
+        //         return res.status(409).json({ error: 'Table number already exists' });
+        //     }
+        // }
         
         res.status(500).json({ error: 'Failed to update company' });
     }
